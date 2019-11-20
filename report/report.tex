@@ -1,0 +1,126 @@
+
+% Fix formatting errors in class jsonWriter pg114 lst 41
+%fix formatting listing 40
+%should code also have onehalfline spacing?
+
+\documentclass[a4paper, 12pt, titlepage]{article}
+
+%---------------Preamables---------------
+\usepackage[none]{hyphenat}
+\usepackage{tikz}
+\usepackage{aeguill}
+\usepackage{setspace}
+\usepackage{listings}
+\usepackage[newfloat]{minted}
+\usepackage[justification=centering]{caption}
+\usepackage[margin=0.78in]{geometry}
+\usepackage{titlesec}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{longtable}
+
+\setlength{\footnotesep}{\baselineskip}
+
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+\newenvironment{code}{\captionsetup{type=listing}}{}
+% \sourcecode{Directory/NameOfFile}{Caption}{Label}
+% #1: Code Snippet
+% #2: Caption
+% #3: Reference Label
+\newcommand{\sourcecode}[3]{
+    \begin{code}
+      \inputminted[linenos,numbersep=5pt,gobble=0,frame=lines,framesep=2mm,]{c}{#1}
+        \caption{#2}
+        \label{lst: #3}
+    \end{code}
+}
+% #1 - Scale
+% #2 - Image path
+% #3 - Caption
+% #4 - Reference Label
+\newcommand{\image}[4]{
+  \begin{center}
+  \includegraphics[scale=#1]{#2}
+  \end{center}
+  \captionof{figure}{#3}
+   \label{fig: #4}
+}
+%---------------  End   ---------------
+
+\begin{document}
+
+%---------------Header---------------
+%Good Syntax styles: trac, abap
+\title{C Assignment Report}
+\author{Luca Muscat}
+
+\titleformat{\section}{\Large\bfseries\filcenter}{}{0em}{}
+\titleformat{\subsection}{\normalsize\bfseries\filcenter}{}{0em}{}
+\titleformat{\subsubsection}{\small\bfseries}{}{0em}{}
+\maketitle
+
+\pagebreak
+\tableofcontents
+\pagebreak
+%---------------   End  ----------------
+
+%--------------- Content ---------------
+\begin{onehalfspacing}
+  \section{Task 1}
+  \label{sec:task1}
+  In this task, a number of array-manipulating functions will have to be implemented. The functions which were implemented are as follows:
+
+  \begin{enumerate}
+
+  \item generate(): A function that populates an array with a
+      sequence of N integers, in ascending order, and starting off integer i
+      having a minimum value of 1. \emph{i} should be accepted as a function
+      argument while N is defined as a constant. This function is
+      destructive in the sense that it overwrites any previously generated
+      values.
+    \item shuffle(): A function that shuffles the items of an array
+      argument and which makes use of stdlib.h’s rand() function.
+    \item sort(): A function (implemented from scratch) that returns a
+sorted array passed as an argument
+\item shoot(): A function that zeros out one element from,
+  a possibly unsorted, array at random. This function returns an error
+  if at least one element had already been previously zeroed out.
+\item target(): A function that returns the number
+  (i.e. the actual value and not the array offset) that was zeroed out
+  by a single call to shoot().
+
+  \end{enumerate}
+  \pagebreak
+  \subsection{Task 1(a)}
+  In this task, the functions listed in section \ref{sec:task1} will
+  be implemented. For the sake of readability, the functions were split
+  into two files which are the ``functions.h'' (which holds the function
+  prototypes and their description via comments) file and
+  ``functions.c'' which contains function's implementations.
+
+
+
+  \subsubsection{struct myint\_t}
+  A structure called \emph{myint\_t}, which contains an int array called \emph{nums} of size N and another int variable called \emph{shoot\_value}.
+  Due to the nature of the \emph{shoot()} and \emph{target()} functions, the best way to keep track of what value has been shot out is by keeping the shot value (value from the filled nums array picked by random by \emph{shoot()}) tied together with the array it got shot out of. This way, for every int array created, a \emph{shoot\_value} will be associated with it.
+
+\sourcecode{snippets/myint_t.c}{myint\_t implementation}{myint_t}
+
+A helper function was also created to help with the creation of \emph{myint\_t} variables. Really and truely all this function does is return a \emph{myint\_t} variable with its \emph{shoot\_value} set to -1 (-1 will signify a null).
+
+\sourcecode{snippets/myint_t_create_t.c}{Helper function.}{create_t}
+
+  \subsubsection{generate()}
+    \sourcecode{snippets/generate_header.c}{Generate Function Prototypes}{generate_header}
+
+\end{onehalfspacing}
+% ---------------   End  ----------------
+
+
+
+
+\end{document}
