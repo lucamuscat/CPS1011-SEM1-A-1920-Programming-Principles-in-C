@@ -1,0 +1,9 @@
+*.org
+*.aux
+*.log
+*.pyg
+*.toc
+*.pdf
+_minted-report
+_minted-report/**
+task1/build/**
