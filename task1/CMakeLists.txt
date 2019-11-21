@@ -5,8 +5,12 @@ set(CMAKE_C_STANDARD 11)
 
 add_library(
   functions
-  functions.c
-  functions.h
+  lib/functions.c
+  lib/functions.h
+  lib/functions_str.c
+  lib/functions_str.h
+  lib/utils.c
+  lib/utils.h
   )
 
 add_executable(task1 main.c)
