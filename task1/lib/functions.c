@@ -1,30 +1,11 @@
-#include "functions.h"
-
 #include <stdio.h>
 #include <stdbool.h>
-#include <stdlib.h>
 #include <limits.h>
-#include <time.h>
 #include <string.h>
+#include <stdlib.h>
 
-myint_t create_t(){
-	myint_t temp;
-	temp.shoot_value = -1;
-	return temp;
-}
-
-int random(int range){
-	/*
-	  This way a completely random seed will be used for every random
-	  number
-	*/
-	srand(time(NULL));
-	/*
-	  rand() % i generates random numbers from 1 to i-1.
-	  Hence the +1.
-	*/
-	return rand() % (range + 1);
-}
+#include "functions.h"
+#include "utils.h"
 
 int generate(int *array, int i){
 	if(i < 1)
