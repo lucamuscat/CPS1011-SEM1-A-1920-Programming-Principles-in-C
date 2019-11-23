@@ -72,6 +72,12 @@ int* sort(int* array){
 	  Allocate the N * size of int in bytes.  Then, return the pointer
 	  to the allocated contiguous memory.  and assign it to pointer p.
 	*/
+
+	/*
+	  Dont forget to free the returned value at the end to avoid
+	  mem leaks.
+	*/
+
 	int* p = malloc(N * sizeof(int));
 
 	size_t min_index;

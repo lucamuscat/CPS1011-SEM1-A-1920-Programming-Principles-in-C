@@ -1,6 +1,13 @@
 #include "functions_str.h"
 #include "utils.h"
 #include <string.h>
+#include <stdlib.h>
+/*
+  param i: index.
+  param x: dest.
+  param y: src/comparison.
+  param z: temp array
+*/
 
 const char NUMS_STR_REPR[11][STR_N] = {
 	"zero",
@@ -16,7 +23,6 @@ const char NUMS_STR_REPR[11][STR_N] = {
 	"ten"
 };
 
-int str_generate(char array[10][STR_N], int i){
 void str_generate(mystr_t* array, int i){
 	strcpy(array -> shoot_value, EMPTY);
 	if (i < 1)
@@ -27,7 +33,6 @@ void str_generate(mystr_t* array, int i){
 	array -> size = 10 - i + 1;
 }
 
-void str_shuffle(char array[10][STR_N]){
 /*
   Same philosophy as shuffle() in functions.c but uses strcpy to swap
   strings around.

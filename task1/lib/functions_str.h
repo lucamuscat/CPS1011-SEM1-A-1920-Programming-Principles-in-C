@@ -7,9 +7,11 @@
 #define OVERFLOW 1
 #define SHOT 1
 #define NO_TARGET -1
+
+#include <stdlib.h>
 #include "functions.h"
 
-const char NUMS_STR_REPR[10][STR_N];
+const char NUMS_STR_REPR[11][STR_N];
 
 /*
   Creating a structure which holds an array of ints, a boolean to
@@ -23,6 +25,7 @@ const char NUMS_STR_REPR[10][STR_N];
 typedef struct mystr_t{
 	char nums[10][STR_N];
 	char shoot_value[STR_N];
+	size_t size;
 } mystr_t;
 
 /*
@@ -39,16 +42,15 @@ mystr_t str_create_t();
   terminator byte. This allows for the data to be tokenized.
   @param *array: Pointer to array which is going to have values generated in it.
   @param i: First number of the generated numbers.
-  @return: Size of string array.
 */
-int str_generate(char array[10][STR_N], int i);
+void str_generate(mystr_t *array, int i);
 
 /*
   Shuffles an array
   @param *array: Pointer to the array which should be shuffled.
 */
 
-void str_shuffle(char array[10][STR_N]);
+void str_shuffle(mystr_t *array);
 
 /*
   Sorts an array in ascending order. Bubble sort is going to be used
@@ -58,12 +60,12 @@ void str_shuffle(char array[10][STR_N]);
   with a null byte. Then this data will be tokenized via the strtok()
   function. This means that generate will have to dynamically allocate memory
   (or just allocate the max number of bytes which can occur).
-  @param *array: Pointer to array which needs to be sorted.
+  @param *array: Pointer to mystr_t struct which needs to be sorted.
   @return: Returns a pointer to a sorted array. This is due to the
   fact that the question asked to return a sorted array and not to
   sort an array.
 */
-char** str_sort(char *array);
+mystr_t str_sort(mystr_t* array);
 
 /*
   Zeroes out an element from the array, returns an error if an element
@@ -72,7 +74,7 @@ char** str_sort(char *array);
   @param *array: Takes a myint_t struct which holds the int array and the shotgunned value.
   @return: 1 if already shot (error), 0 if not shot.
 */
-char* str_shoot(mystr_t *array);
+int str_shoot(mystr_t *array);
 
 
 /*
@@ -80,6 +82,8 @@ char* str_shoot(mystr_t *array);
   introduction of the struct, this function becomes redundant.
   @param *array: Extracts the shotgunned value from a myint_t struct.
 */
-char* str_target(myint_t *array);
+char* str_target(mystr_t *array);
+
+int* str_to_int(mystr_t *array);
 
 #endif

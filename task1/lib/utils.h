@@ -8,7 +8,7 @@
 #define UTILS_H
 
 #define N 25
-
+#define EMPTY "empty"
 /*
   Creating a structure which holds an array of ints, a boolean to
   check if its shotgunned (to prevent nulls) and the shotgunned value.
