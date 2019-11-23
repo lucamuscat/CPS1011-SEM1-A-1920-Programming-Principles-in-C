@@ -1,7 +1,8 @@
 #include "functions_str.h"
 #include <string.h>
 
-const char NUMS_STR_REPR[10][STR_N] = {
+const char NUMS_STR_REPR[11][STR_N] = {
+	"zero",
 	"one",
 	"two",
 	"three",
