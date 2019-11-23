@@ -42,4 +42,20 @@ void str_shuffle(mystr_t* array){
 		strcpy(array -> nums[i], tmp);
 	}
 }
+
+/*
+  Has to take a mystr_t ptr as an arguement so that the size of the
+  array is known since an array can be partially filled
+*/
+
+int str_shoot(mystr_t *array){
+	if(strcmp(array -> shoot_value, EMPTY) == 0){
+		int rand = random(array -> size);
+		strcpy(array -> shoot_value, array -> nums[rand]);
+		strcpy(array -> nums[rand], "zero");
+
+		return 0;
+	}
+	return SHOT;
+}
 }
