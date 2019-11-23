@@ -58,4 +58,10 @@ int str_shoot(mystr_t *array){
 	}
 	return SHOT;
 }
+char* str_target(mystr_t *array){
+	char *string_ptr = array -> shoot_value;
+	if(strcmp(string_ptr, EMPTY))
+		return "error";
+	return string_ptr;
+}
 }
