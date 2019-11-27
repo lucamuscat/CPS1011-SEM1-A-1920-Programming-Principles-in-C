@@ -7,10 +7,9 @@
 #include "functions.h"
 #include "utils.h"
 
-int generate(int *array, int i){
-	if(i < 1)
+int generate(myint_t *array, int i){
+  if(i < 1)
 		i = 1;
-
 	/*
 	   Check for an overflow. Since checking for an overflow once it
 	   happened doesn't work out so well, we check if i is smaller
@@ -20,7 +19,7 @@ int generate(int *array, int i){
 	*/
 	if(i < INT_MAX - N){
 		for(size_t j = i; j < i + N; ++j){
-			array[j - i] = j;
+			array->nums[j - i] = j;
 		}
 		return 0;
 	}
@@ -36,13 +35,17 @@ int generate(int *array, int i){
   https://stackoverflow.com/questions/42321370/fisher-yates-shuffling-algorithm-in-c
   - Tectrendz
 */
-void shuffle(int *array){
+int shuffle(myint_t *array){
 	int tmp, j;
+	if(array->nums[0] == -1){
+		puts(NOT_GENERATED_ERROR);
+		return NOT_GENERATED;
+	}
 	for(size_t i = N-1; i > 0; --i){
 		j = random(i);
-		tmp = array[j];
-		array[j] = array[i];
-		array[i] = tmp;
+		tmp = array->nums[j];
+		array -> nums[j] = array -> nums[i];
+		array -> nums[i] = tmp;
 	}
 }
 
@@ -51,23 +54,36 @@ int shoot(myint_t *array){
 	   Check if the shoot_value is null, meaning that it hasn't
 	   been shot before.
 	*/
-	if(array -> shoot_value == -1){
+	if(array -> shoot_value == -1 && array -> nums[0] != -1){
 		// Rng(R) = {x: 0 <= x <= N-1}
 		int j = random(N-1);
 		array -> shoot_value = array -> nums[j];
 		array -> nums[j] = 0;
 		return 0;
 	}
+	if(array->nums[0] == -1){
+		puts(NOT_GENERATED_ERROR);
+		return NOT_GENERATED;
+	}
+
+	puts("Shoot function has already been called");
 	return SHOT;
 }
 
 int target(myint_t* array){
-	if(!array -> shoot_value)
+	if(array->nums[0] == -1){
+		puts(NOT_GENERATED_ERROR);
+		return NOT_GENERATED;
+	}
+
+	if(!array -> shoot_value){
+		puts("Please shoot first.");
 		return NO_TARGET;
+	}
 	return array -> shoot_value;
 }
 
-int* sort(int* array){
+myint_t sort(myint_t* array){
 	/*
 	  Allocate the N * size of int in bytes.  Then, return the pointer
 	  to the allocated contiguous memory.  and assign it to pointer p.
@@ -78,23 +94,20 @@ int* sort(int* array){
 	  mem leaks.
 	*/
 
-	int* p = malloc(N * sizeof(int));
+	myint_t p = *array;
 
 	size_t min_index;
-
-	// Copy the array arguement to the allocated memory pointed by p
-	memcpy(p, array, N * sizeof(int));
 
 	for(size_t i = 0; i < N - 1; ++i){
 		min_index = i;
 		for(size_t j = i + 1; j < N; ++j){
-			if(p[j] < p[min_index]){
+			if(p.nums[j] < p.nums[min_index]){
 				min_index = j;
 			}
 		}
-		int temp = p[i];
-		p[i] = p[min_index];
-		p[min_index] = temp;
+		int temp = p.nums[i];
+		p.nums[i] = p.nums[min_index];
+		p.nums[min_index] = temp;
 	}
 	return p;
 }

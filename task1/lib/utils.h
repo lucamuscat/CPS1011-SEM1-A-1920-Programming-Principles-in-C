@@ -32,4 +32,6 @@ int random(int range);
 */
 myint_t create_t();
 
+void menu();
+
 #endif
