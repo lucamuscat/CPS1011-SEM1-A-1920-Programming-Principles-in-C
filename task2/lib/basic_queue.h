@@ -133,4 +133,6 @@ int purgeQs(MsgQs_t *queue, void* indentifier);
 int persistQ(MsgQs_t *q, int identifier);
 int restoreQ(MsgQs_t *q, int identifier);
 
+int receiveMessages(MsgQs_t *q, int identifier, size_t num_of_messages);
+
 #endif
