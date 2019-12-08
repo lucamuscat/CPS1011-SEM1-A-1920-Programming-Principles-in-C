@@ -2,14 +2,8 @@
 #include "utils.h"
 #include <string.h>
 #include <stdlib.h>
-/*
-  param i: index.
-  param x: dest.
-  param y: src/comparison.
-  param z: temp array
-*/
 
-const char NUMS_STR_REPR[11][STR_N] = {
+char NUMS_STR_REPR[11][STR_N] = {
 	"zero",
 	"one",
 	"two",
@@ -22,6 +16,14 @@ const char NUMS_STR_REPR[11][STR_N] = {
 	"nine",
 	"ten"
 };
+
+mystr_t str_create_t() {
+	mystr_t temp;
+	strcpy(temp.shoot_value, EMPTY);
+	strcpy(temp.nums[0], EMPTY);
+	temp.size = 0;
+	return temp;
+}
 
 void str_generate(mystr_t* array, int i){
 	strcpy(array -> shoot_value, EMPTY);
@@ -37,9 +39,14 @@ void str_generate(mystr_t* array, int i){
   Same philosophy as shuffle() in functions.c but uses strcpy to swap
   strings around.
 */
-void str_shuffle(mystr_t* array){
+int str_shuffle(mystr_t* array){
 	char tmp[STR_N];
 	int j;
+
+	if(array->size == 0){
+		return NOT_GENERATED;
+	}
+
 	for (size_t i = 0; i < array->size; ++i) {
 		j = random(i);
 		strcpy(tmp, array -> nums[j]);
@@ -52,7 +59,6 @@ void str_shuffle(mystr_t* array){
   Has to take a mystr_t ptr as an arguement so that the size of the
   array is known since an array can be partially filled
 */
-
 int str_shoot(mystr_t *array){
 	if(strcmp(array -> shoot_value, EMPTY) == 0){
 		int rand = random(array -> size);
@@ -61,13 +67,16 @@ int str_shoot(mystr_t *array){
 
 		return 0;
 	}
+
+	if(strcmp(array->nums[0], EMPTY) == 0){
+		return NOT_GENERATED;
+	}
 	return SHOT;
 }
 char* str_target(mystr_t *array){
-	char *string_ptr = array -> shoot_value;
-	if(strcmp(string_ptr, EMPTY))
+	if(strcmp(array->shoot_value, EMPTY) == 0)
 		return "error";
-	return string_ptr;
+	return array->shoot_value;
 }
 void int_swap(int* a, int* b){
 	//Swap ints

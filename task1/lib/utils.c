@@ -151,5 +151,4 @@ void menu() {
 			break;
 		}
 	}while(status == 1); // Stop if a character is encountered.
-
 }

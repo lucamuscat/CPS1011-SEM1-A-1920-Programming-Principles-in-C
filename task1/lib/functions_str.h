@@ -4,14 +4,11 @@
 // Largest number in string representation has a length of 5, bit is left as extra for the null byte
 #define STR_N 6
 #define MIN_I 1
-#define OVERFLOW 1
-#define SHOT 1
-#define NO_TARGET -1
 
 #include <stdlib.h>
 #include "functions.h"
 
-const char NUMS_STR_REPR[11][STR_N];
+char NUMS_STR_REPR[11][STR_N];
 
 /*
   Creating a structure which holds an array of ints, a boolean to
@@ -48,9 +45,9 @@ void str_generate(mystr_t *array, int i);
 /*
   Shuffles an array
   @param *array: Pointer to the array which should be shuffled.
+  @return: Returns a NOT_GENERATED error code if not generated.
 */
-
-void str_shuffle(mystr_t *array);
+int str_shuffle(mystr_t *array);
 
 /*
   Sorts an array in ascending order. Bubble sort is going to be used
