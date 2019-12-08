@@ -62,11 +62,11 @@ MsgQs_t* initializeMsgQs();
   lists are going to be used in task 2b, this process will have to be
   done recursively.
 
-  @param *queue: Pointer to MsgQs_t variable which needs to be
+  @param *q: Pointer to MsgQs_t variable which needs to be
   relinquished.
-  *queue will also be set to null once the freeing process is done.
+  *q will also be set to null once the freeing process is done.
 */
-void unloadMsgQs(MsgQs_t *queue);
+void unloadMsgQs(MsgQs_t *q);
 
 /*
   Places a new node inside of a specified MsgQs_t variable. Its
@@ -83,7 +83,7 @@ int createQ(MsgQs_t *q, int identifier);
 /*
  Display all nodes by their identifier and their unsent messages.
 */
-void listQs(MsgQs_t *queue);
+void listQs(MsgQs_t *q);
 
 /*
   When a queue is deleted, it will simply be overwritten by the
@@ -93,7 +93,7 @@ void listQs(MsgQs_t *queue);
 
   @return: Returns DELETE_ERROR if the queue identifier doesn't exist.
 */
-int deleteQ(MsgQs_t *queue, int indentifier);
+int deleteQ(MsgQs_t *q, int indentifier);
 
 /*
   Sends a message (enqueues a node) to all nodes or a specific node if
@@ -109,14 +109,14 @@ specified message queue
 
 @return: Return SEND_ERROR if identifier doesn't exist
 */
-int sendMessage(MsgQs_t *queue, void *identifier, char* message);
+int sendMessage(MsgQs_t *q, void *identifier, char* message);
 
 /*
   Sends a message to all of the nodes in MsgQs_t
   @param queue: queue which will be operated on.
   @param message: Message which will be sent.
 */
-void sendMessageBatch(MsgQs_t *queue, char message[MESSAGE_LIMIT]);
+void sendMessageBatch(MsgQs_t *q, char message[MESSAGE_LIMIT]);
 
 /*
   Clears a node from all of its messages, just loop through all of the
@@ -124,7 +124,7 @@ void sendMessageBatch(MsgQs_t *queue, char message[MESSAGE_LIMIT]);
   @param queue: MsgQs_t on which this function will operate.
   @param indetifier: Identifier of node to clear.
 */
-int purgeQs(MsgQs_t *queue, void* indentifier);
+int purgeQs(MsgQs_t *q, void* indentifier);
 
 /*
   Experiment with serialization and come back here once you figured it
