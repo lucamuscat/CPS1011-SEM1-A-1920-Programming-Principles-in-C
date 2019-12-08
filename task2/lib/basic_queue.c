@@ -87,7 +87,9 @@ int sendIndividualMessage(node *node, char *message) {
 			also change.
 		  */
 		node->messages[node->index] = malloc(sizeof(char) * CHAR_LIMIT);
-		strcpy(node->messages[node->index], message);
+		// Strncpy will also prevent messages longer than CHAR_LIMIT
+		// from being sent.
+		strncpy(node->messages[node->index], message, CHAR_LIMIT);
 		node->index++;
 		return SUCCESS;
 	}
