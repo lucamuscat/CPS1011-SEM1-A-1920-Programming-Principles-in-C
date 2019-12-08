@@ -130,7 +130,7 @@ int purgeQs(MsgQs_t *queue, void* indentifier);
   Experiment with serialization and come back here once you figured it
   out
 */
-int persistQs();
-int restoreQ();
+int persistQ(MsgQs_t *q, int identifier);
+int restoreQ(MsgQs_t *q, int identifier);
 
 #endif
