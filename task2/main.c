@@ -12,20 +12,11 @@ void error_handler(int status, char* error_message) {
 
 int main(void) {
 	MsgQs_t *q;
-	q = initializeMsgQs();
-	error_handler(createQ(q, 69), "ENQUEUE ERROR");
-	error_handler(createQ(q, 420), "ENQUEUE ERROR");
-	error_handler(createQ(q, 42069), "ENQUEUE ERROR");
-	error_handler(deleteQ(q, 420), "DOESN'T EXIST");
-	sendMessageBatch(q, "Whats poppin jimbo");
-	listQs(q);
-	sendMessage(q, NULL, "Ayye this is a null");
-	listQs(q);
-	sendMessage(q, 69, "Sixty nine ninty nine");
-	listQs(q);
-	purgeQs(q, 69);
-	listQs(q);
-	purgeQs(q, NULL);
-	listQs(q);
-	free(q);
+
+    /* q = initializeMsgQs(); */
+	/* restoreQ(q, 69); */
+	/* listQs(q); */
+	/* receiveMessages(q, 69, 4); */
+	/* listQs(q); */
+	/* free(q); */
 }
