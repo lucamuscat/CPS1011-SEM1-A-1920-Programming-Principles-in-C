@@ -23,6 +23,8 @@ size_t byte_len(size_t number) {
   double bit_len = floor(log2(number)) + 1.0;
   return ceil(bit_len / 8.0);
 }
+
+// return the number of bytes returned in order to avoid strlen.
 char* encode_long_object(size_t length, char offset){
 	size_t byte_length = byte_len(length);	// +2 to hold the offset and the null byte.
 	size_t buffer_size = sizeof(char)*(byte_length+2);
@@ -35,6 +37,7 @@ char* encode_long_object(size_t length, char offset){
 		buffer[i] = length>>(8*j);
 	return buffer;
 }
+// return the number of bytes returned in order to avoid strlen.
 char* str_encode_length(size_t length) {
 	size_t byte_length = byte_len(length);
 	char* buffer;
@@ -54,7 +57,9 @@ char* str_encode_length(size_t length) {
 void encode_q(node* Queue, char* buffer) {
 	for (size_t i = 0; i < Queue->index; ++i) {
 		char* message = Queue->messages[i];
-		strcat(buffer, str_encode_length(strlen(message)));
+		if (strlen(message)!=1){
+			strcat(buffer, str_encode_length(strlen(message)));
+		}
 		strcat(buffer, message);
 	}
 }
