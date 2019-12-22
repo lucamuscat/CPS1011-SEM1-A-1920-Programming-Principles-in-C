@@ -58,13 +58,4 @@ void display(nodeMsg_t *front) {
 	}
 }
 
-void test(void) {
-	MsgQ_t *q;
-	q = malloc(sizeof(MsgQ_t));
-	init(q);
-	enqueue(q, "Luca");
-	enqueue(q, "Bob");
-	enqueue(q, "John Mayor");
-	enqueue(q, "Ross");
-	display(q->front);
 }
