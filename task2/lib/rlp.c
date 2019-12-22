@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define DUMMY_TEXT "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse eu massa eu diam interdum laoreet. Integer lectus turpis, convallis et lorem eu, dignissim facilisis nisl. Nunc sollicitudin purus sed nunc facilisis tincidunt. Nunc porta nunc a ex tincidunt dapibus. Sed consectetur nisl vel lacus sollicitudin pretium. Cras faucibus nunc eu est rhoncus, id pulvinar nisl vulputate. Quisque at mauris velit. Fusce fermentum finibus finibus. Phasellus euismod nec enim id facilisis. Maecenas id lectus nunc. Integer fringilla lectus lorem, ac ullamcorper lectus pretium at. Sed felis lectus, auctor sed egestas non, rutrum non urna. Vestibulum nec euismod erat. Nam viverra nec lacus quis accumsan. Aliquam sodales bibendum tellus.Proin hendrerit purus ut ornare sollicitudin. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec dapibus nec ligula vel condimentum. Donec in elit et eros iaculis accumsan in vel nibh. Nulla massa massa, laoreet non imperdiet eget, cursus eget amet."
+#define DUMMY_TEXT "uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu"
 
 size_t byte_len(size_t number) {
   /*
