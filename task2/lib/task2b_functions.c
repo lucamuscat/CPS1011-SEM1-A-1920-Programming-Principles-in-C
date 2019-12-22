@@ -25,7 +25,7 @@ int createQ(MsgQs_t *q, int identifier) {
 		return -1;
 	nodeMsg_t *tmp;
 	tmp = malloc(sizeof(nodeMsg_t));
-	tmp -> front = malloc(sizeof(Item));
+	tmp->next = NULL;
 	tmp->ID = identifier;
 	tmp->size = 0;
 	if(is_empty(q)){
@@ -45,12 +45,14 @@ void unloadMsgQs(MsgQs_t *q) {
 }
 
 void listQs(nodeMsg_t *front) {
-	if(front != NULL){
+	if(front->next != NULL){
 		printf("ID: %d", front->ID);
 		listItems(front->front);
 		listQs(front->next);
+		return;
 	}
-	listQs(front);
+	printf("ID: %d", front->ID);
+	listItems(front->front);
 	return;
 }
 
@@ -65,7 +67,13 @@ int deleteQ(MsgQs_t* q, int identifier){
 }
 
 // returns an error if queue id doesn't exist
-void sendMessageBatch(MsgQs_t *q, Item *Item) {
-
-
+void sendMessageBatch(MsgQs_t *q, char* sender, char* subject, char* content) {
+	size_t size = q->size;
+	/* nodeMsg_t* front = q->front; */
+	/* while(size > 0){ */
+	/* 	enqueue_nodeMsg_t(front, sender, subject, content); */
+	/* 	front = front->next; */
+	/* 	size--; */
+	/* } */
+	batch_populate_node(q->front, sender, subject, content);
 }

@@ -5,9 +5,10 @@
 #include "task2b_structs.h"
 
 MsgQs_t* initializeMsgQs();
-int createQ(MsgQs_t *q, int identifer);
-void unloadMsgQs(MsgQs_t *q);
-void listQs(nodeMsg_t *front);
-int deleteQ(MsgQs_t *q, int identifier);
+int createQ(MsgQs_t* q, int identifer);
+void unloadMsgQs(MsgQs_t* q);
+void sendMessageBatch(MsgQs_t* q, char* sender, char* subject, char* content);
+void listQs(nodeMsg_t* front);
+int deleteQ(MsgQs_t* q, int identifier);
 
 #endif

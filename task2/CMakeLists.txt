@@ -25,5 +25,5 @@ add_library(
 add_executable(task2 main.c lib/basic_queue.c)
 target_link_libraries(task2 functions)
 
-add_executable(task2b main_task2.c)
+add_executable(task2b main_task2b.c)
 target_link_libraries(task2b functions_2b)
