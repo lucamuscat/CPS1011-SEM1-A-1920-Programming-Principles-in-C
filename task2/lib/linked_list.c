@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "linked_list.h"
+#include "task2_utils.h"
 
 #define FULL_QUEUE_ERROR -1
 #define EMPTY_ERROR -2
@@ -41,6 +43,9 @@ int createQ(MsgQs_t *q, int identifier) {
 	q->size++;
 }
 
+void unloadMsgQs(MsgQs_t *q) {
+	nodeMsg_t* node = q->front;
+	free_node(node);
 }
 
 void listQs(nodeMsg_t *front) {
@@ -53,4 +58,12 @@ void listQs(nodeMsg_t *front) {
 	return;
 }
 
+int deleteQ(MsgQs_t* q, int identifier){
+	if(q->front->ID == identifier){
+		nodeMsg_t* temp = q->front;
+		free_item(temp->front);
+		q->front = temp->next;
+		return 1;
+	}
+	return removeQ(q->front, identifier);
 }
