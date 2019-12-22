@@ -19,12 +19,6 @@ MsgQs_t* initializeMsgQs() {
 	return q;
 }
 
-// Returns EMPTY_ERROR when empty and 1 when not empty.
-int is_empty(MsgQ_t *queue) {
-	return queue->size == 0;
-}
-
-int enqueue(MsgQ_t *container, char message[MESSAGE_LENGTH]) {
 int createQ(MsgQs_t *q, int identifier) {
 	if(contains_id(q->front, identifier))
 		return -1;
