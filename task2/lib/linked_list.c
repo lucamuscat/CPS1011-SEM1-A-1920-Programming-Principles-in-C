@@ -1,33 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "linked_list.h"
 
 #define FULL_QUEUE_ERROR -1
 #define EMPTY_ERROR -2
 
 #define MESSAGE_LENGTH 256
 #define LIMIT 25
-
-/*
-  First things first, create a queue
-*/
-
-/*
-  MsgQ_t will first be implemented as an array for task 2a
-  it will then be implemented as a linked list for task 2
-*/
-
-struct nodeMsg_t {
-	char message[256];
-	struct nodeMsg_t *next;
-};
-typedef struct nodeMsg_t nodeMsg_t;
-
-typedef struct MsgQ_t {
-	size_t size;
-	nodeMsg_t *front;
-	nodeMsg_t *rear;
-} MsgQ_t;
 
 MsgQs_t* initializeMsgQs() {
 	MsgQs_t *q = (MsgQs_t*) malloc(sizeof(MsgQs_t));
