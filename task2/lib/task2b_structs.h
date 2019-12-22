@@ -25,6 +25,7 @@ struct nodeMsg_t {
 	Item* front;
 	Item* rear;
 	int ID;
+	size_t size;
 	struct nodeMsg_t *next;
 };
 typedef struct nodeMsg_t nodeMsg_t;
