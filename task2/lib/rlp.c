@@ -81,13 +81,3 @@ char* str_encode_node(node* Queue) {
 	encode_q(Queue, buffer);
 	return buffer;
 }
-int main(void) {
-	char* object = encode_long_object(strlen(DUMMY_TEXT), 0xb7);
-	MsgQs_t *q = initializeMsgQs();
-	createQ(q, 420);
-	sendMessage(q, (void*) 420, "OQ OW, STINKYYYY, POOOOPPPYYY");
-	sendMessage(q,(void*) 420, DUMMY_TEXT);
-
-	char* result = str_encode_node(q->nodes[0]);
-	free(object);
-}
