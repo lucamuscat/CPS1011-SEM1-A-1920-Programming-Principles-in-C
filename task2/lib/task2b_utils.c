@@ -1,6 +1,6 @@
-#include "linked_list.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include  "task2b_functions.h"
 // The recursed data can be saved into a hashmap
 // but that will make my current solution more complex.
 _Bool contains_id(nodeMsg_t* front, int identifier) {
