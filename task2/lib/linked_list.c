@@ -41,14 +41,6 @@ int createQ(MsgQs_t *q, int identifier) {
 	q->size++;
 }
 
-int dequeue(MsgQ_t *container, char * message_container){
-	nodeMsg_t *tmp;
-	strcpy(message_container, container->front->message);
-	tmp = container -> front;
-	container -> front = container -> front -> next;
-	container->size--;
-	free(tmp);
-	return 1;
 }
 
 void listQs(nodeMsg_t *front) {
