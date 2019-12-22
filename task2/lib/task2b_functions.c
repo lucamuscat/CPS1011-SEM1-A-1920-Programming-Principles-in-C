@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "linked_list.h"
-#include "task2_utils.h"
+#include "task2b_functions.h"
+#include "task2b_utils.h"
 
 #define FULL_QUEUE_ERROR -1
 #define EMPTY_ERROR -2
@@ -35,6 +35,7 @@ int createQ(MsgQs_t *q, int identifier) {
 		//
 	}
 	q->size++;
+	return 1;
 }
 
 void unloadMsgQs(MsgQs_t *q) {
@@ -60,4 +61,10 @@ int deleteQ(MsgQs_t* q, int identifier){
 		return 1;
 	}
 	return removeQ(q->front, identifier);
+}
+
+// returns an error if queue id doesn't exist
+void sendMessageBatch(MsgQs_t *q, Item *Item) {
+
+
 }
