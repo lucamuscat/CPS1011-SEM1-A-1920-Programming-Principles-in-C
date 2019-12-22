@@ -23,18 +23,22 @@ int is_empty(MsgQ_t *queue) {
 }
 
 int enqueue(MsgQ_t *container, char message[MESSAGE_LENGTH]) {
+int createQ(MsgQs_t *q, int identifier) {
+	if(contains_id(q->front, identifier))
+		return -1;
 	nodeMsg_t *tmp;
 	tmp = malloc(sizeof(nodeMsg_t));
-	strcpy(tmp -> message, message);
-	if(is_empty(container)){
-		container -> front = tmp;
-		container -> rear = tmp;
+	tmp -> front = malloc(sizeof(Item));
+	tmp->ID = identifier;
+	if(is_empty(q)){
+		q -> front = tmp;
+		q -> rear = tmp;
 	} else{
-		container -> rear -> next = tmp;
-		container -> rear = tmp;
+		q -> rear -> next = tmp;
+		q -> rear = tmp;
 		//
 	}
-	container->size++;
+	q->size++;
 }
 
 int dequeue(MsgQ_t *container, char * message_container){
