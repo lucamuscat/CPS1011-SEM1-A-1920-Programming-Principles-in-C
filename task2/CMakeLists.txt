@@ -13,8 +13,11 @@ add_library(
 add_library(
   functions_2b
   SHARED
-  lib/linked_list.c
-  lib/linked_list.h
+  lib/task2b_utils.c
+  lib/task2b_utils.h
+  lib/task2b_functions.c
+  lib/task2b_functions.h
+  lib/task2b_structs.h
   lib/rlp.c
   )
 
@@ -22,5 +25,5 @@ add_library(
 add_executable(task2 main.c lib/basic_queue.c)
 target_link_libraries(task2 functions)
 
-add_executable(task2b main_task2.c lib/linked_list.c)
+add_executable(task2b main_task2.c)
 target_link_libraries(task2b functions_2b)
