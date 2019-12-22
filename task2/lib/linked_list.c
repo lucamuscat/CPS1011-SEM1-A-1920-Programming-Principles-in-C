@@ -52,10 +52,14 @@ int dequeue(MsgQ_t *container, char * message_container){
 }
 
 void display(nodeMsg_t *front) {
+void listQs(nodeMsg_t *front) {
 	if(front != NULL){
-		puts(front -> message);
-		display(front->next);
+		printf("ID: %d", front->ID);
+		listItems(front->front);
+		listQs(front->next);
 	}
+	listQs(front);
+	return;
 }
 
 }
