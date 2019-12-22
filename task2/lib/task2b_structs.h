@@ -1,8 +1,11 @@
-#ifndef TASK2B_H
-#define TASK2B_H
-// include for size_t type.
-#include <stdlib.h>
+#ifndef STRUCTS_H
+#define STRUCTS_H
 
+/*
+  This struct was created in order to remove the circular dependency
+  caused by linked_list.h including task2_utils and vice versa.
+*/
+#include <stdio.h>
 
 struct Message {
 	char* subject;
@@ -32,10 +35,5 @@ typedef struct MsgQs_t {
 	nodeMsg_t *rear;
 } MsgQs_t;
 
-MsgQs_t* initializeMsgQs();
-int createQ(MsgQs_t *q, int identifer);
-void unloadMsgQs(MsgQs_t *q);
-void listQs(nodeMsg_t *front);
-int deleteQ(MsgQs_t *q, int identifier);
 
 #endif
