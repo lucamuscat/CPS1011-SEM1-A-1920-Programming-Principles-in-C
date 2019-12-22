@@ -4,6 +4,10 @@
 *.pyg
 *.toc
 *.pdf
+*.py
+*.exe
+.#*
 _minted-report
 _minted-report/**
 task1/build/**
+task2/build/**
