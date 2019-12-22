@@ -78,5 +78,24 @@ int removeQ(nodeMsg_t *front, int identifier) {
 	*/
 
 	return removeQ(front->next, identifier);
+}
+
+// https://www.codesdope.com/blog/article/making-a-queue-using-linked-list-in-c/
+// Don't forget to strcpy everything. To avoid bugs due to references.
+Item* create_item(char *sender, char *subject, char *content) {
+	Item* temp = malloc(sizeof(Item));
+	temp->sender = malloc(sizeof(char) * strlen(sender));
+	temp->message = malloc(sizeof(Message));
+	temp->message->subject = malloc(sizeof(char)*strlen(subject));
+	temp->message->content = malloc(sizeof(char)*strlen(subject));
+
+	strcpy(temp->sender, sender);
+	strcpy(temp->message->subject, subject);
+	strcpy(temp->message->content, content);
+
+	temp->next = NULL;
+
+	return temp;
+}
 
 }
