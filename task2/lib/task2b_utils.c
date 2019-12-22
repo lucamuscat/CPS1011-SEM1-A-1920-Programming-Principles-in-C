@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include  "task2b_functions.h"
 // The recursed data can be saved into a hashmap
 // but that will make my current solution more complex.
@@ -14,6 +13,7 @@ _Bool contains_id(nodeMsg_t* front, int identifier) {
 int is_empty(MsgQs_t *queue) {
 	return queue->size == 0;
 }
+
 
 void free_item(Item *Item) {
 	if(Item->next != NULL)
@@ -33,6 +33,7 @@ void free_node(nodeMsg_t *node) {
 	free(node);
 	return;
 }
+
 
 void printItem(Item *Item) {
 	printf("Sender: %s\n", Item->sender);
@@ -97,16 +98,4 @@ Item* create_item(char *sender, char *subject, char *content) {
 	return temp;
 }
 
-int enqueue_nodeMsg_t(nodeMsg_t* q, char* sender, char* subject, char* content) {
-	Item *tmp;
-    tmp = create_item(sender, subject, content);
-	// is the node not empty?
-    if(q->size!=0) {
-        q->rear->next = tmp;
-        q->rear = tmp;
-    }
-    else {
-        q->front = q->rear = tmp;
-    }
-	q->size++;
 }
