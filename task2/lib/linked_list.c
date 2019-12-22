@@ -51,7 +51,6 @@ int dequeue(MsgQ_t *container, char * message_container){
 	return 1;
 }
 
-void display(nodeMsg_t *front) {
 void listQs(nodeMsg_t *front) {
 	if(front != NULL){
 		printf("ID: %d", front->ID);
