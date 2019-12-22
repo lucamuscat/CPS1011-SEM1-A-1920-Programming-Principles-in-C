@@ -19,6 +19,7 @@ MsgQs_t* initializeMsgQs() {
 	return q;
 }
 
+// Enqueue a MsgQs_t variable.
 int createQ(MsgQs_t *q, int identifier) {
 	if(contains_id(q->front, identifier))
 		return -1;
@@ -26,13 +27,13 @@ int createQ(MsgQs_t *q, int identifier) {
 	tmp = malloc(sizeof(nodeMsg_t));
 	tmp -> front = malloc(sizeof(Item));
 	tmp->ID = identifier;
+	tmp->size = 0;
 	if(is_empty(q)){
 		q -> front = tmp;
 		q -> rear = tmp;
 	} else{
 		q -> rear -> next = tmp;
 		q -> rear = tmp;
-		//
 	}
 	q->size++;
 	return 1;
