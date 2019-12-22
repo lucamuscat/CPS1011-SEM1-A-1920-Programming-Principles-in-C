@@ -29,10 +29,12 @@ typedef struct MsgQ_t {
 	nodeMsg_t *rear;
 } MsgQ_t;
 
-void init(MsgQ_t *queue) {
-	queue -> size = 0;
-	queue -> front = NULL;
-	queue -> rear = NULL;
+MsgQs_t* initializeMsgQs() {
+	MsgQs_t *q = (MsgQs_t*) malloc(sizeof(MsgQs_t));
+	q -> size = 0;
+	q -> front = NULL;
+	q -> rear = NULL;
+	return q;
 }
 
 // Returns EMPTY_ERROR when empty and 1 when not empty.
