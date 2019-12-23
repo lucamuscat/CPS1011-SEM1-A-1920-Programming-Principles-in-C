@@ -45,14 +45,16 @@ void unloadMsgQs(MsgQs_t *q) {
 }
 
 void listQs(nodeMsg_t *front) {
-	if(front->next != NULL){
-		printf("ID: %d", front->ID);
+
+	if(front->size == 0){
+		puts("This is empty :/");
+	} else {
+		printf("\nID: %d", front->ID);
 		listItems(front->front);
-		listQs(front->next);
-		return;
 	}
-	printf("ID: %d", front->ID);
-	listItems(front->front);
+	if(front->next != NULL){
+		return listQs(front->next);
+	}
 	return;
 }
 
