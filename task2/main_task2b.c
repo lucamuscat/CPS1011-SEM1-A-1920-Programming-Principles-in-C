@@ -2,8 +2,12 @@
 int main(void) {
 	MsgQs_t* test = initializeMsgQs();
 	createQ(test, 420);
-	createQ(test, 69);
-	sendMessageBatch(test, "Luca Muscat", "Yo, Angelo", "Sorry for turning you into a rock :/");
+	sendMessage(test,(void*) 420, "Snoop Dogg", "Ganja my dude", "AAAAAAAAA WEEEEEEDDDD");
+	sendMessage(test,(void*) 420, "Luca Muscat", "aaaa", "uuuuu");
+	sendMessage(test,(void*) 420, "Bob Ross", "Paint", "Trees");
+	listQs(test->front);
+	receiveMessages(test, 420, 2);
+	puts("=================");
 	listQs(test->front);
 	unloadMsgQs(test);
 	return 0;
