@@ -1,11 +1,12 @@
 #ifndef STRUCTS_H
 #define STRUCTS_H
-
+#
 /*
   This struct was created in order to remove the circular dependency
   caused by linked_list.h including task2_utils and vice versa.
 */
 #include <stdio.h>
+#include <time.h>
 
 struct Message {
 	char* subject;
@@ -16,7 +17,7 @@ typedef struct Message Message;
 struct Item {
 	char* sender;
 	Message* message;
-	long long unsigned int expiry;
+	time_t expiry;
 	struct Item* next;
 };
 typedef struct Item Item;

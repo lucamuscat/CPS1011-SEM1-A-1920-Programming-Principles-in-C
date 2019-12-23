@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include  "task2b_functions.h"
+#include <time.h>
+#include "task2b_functions.h"
+#include "rlp.h"
 // The recursed data can be saved into a hashmap
 // but that will make my current solution more complex.
 _Bool contains_id(nodeMsg_t* front, int identifier) {
@@ -23,16 +25,21 @@ int is_empty(MsgQs_t *queue) {
 }
 
 
-void free_item(Item *Item) {
-	if(Item->next != NULL)
-		free_item(Item->next);
+void free_individual_item(Item* Item) {
 	free(Item->message->content);
 	free(Item->message->subject);
 	free(Item->message);
 	free(Item->sender);
 	free(Item);
+}
+
+void free_item(Item *Item) {
+	if(Item->next != NULL)
+		free_item(Item->next);
+	free_individual_item(Item);
 	return;
 }
+
 // Free everything using tail-recursion.
 void free_node(nodeMsg_t *node) {
 	if(node->next != NULL)
@@ -44,18 +51,16 @@ void free_node(nodeMsg_t *node) {
 
 
 void printItem(Item *Item) {
-	printf("Sender: %s\n", Item->sender);
+	printf("\nSender: %s\n", Item->sender);
 	printf("Subject: %s\n", Item->message->subject);
 	printf("%s\n", Item->message->content);
 	printf("Expiry: %llu\n", Item->expiry);
 }
 
 void listItems(Item *Item) {
-	if(Item->next != NULL){
-		printItem(Item);
-		listItems(Item->next);
-	}
 	printItem(Item);
+	if(Item->next != NULL)
+		listItems(Item->next);
 	return;
 }
 
@@ -70,6 +75,7 @@ int removeQ(nodeMsg_t *front, int identifier) {
 
 	if(front->next->ID == identifier){
 		nodeMsg_t* next = front->next;
+		next->size = 0;
 		// Free all the Qs items
 		free_item(next->front);
 		// Replace the next node with the next node's next node.
@@ -92,15 +98,13 @@ int removeQ(nodeMsg_t *front, int identifier) {
 // Don't forget to strcpy everything. To avoid bugs due to references.
 Item* create_item(char *sender, char *subject, char *content) {
 	Item* temp = malloc(sizeof(Item));
-	temp->sender = malloc(sizeof(char) * strlen(sender));
+	temp->sender = malloc(sizeof(char) *strlen(sender));
 	temp->message = malloc(sizeof(Message));
-	temp->message->subject = malloc(sizeof(char)*strlen(subject));
-	temp->message->content = malloc(sizeof(char)*strlen(content));
-
-	strcpy(temp->sender, sender);
-	strcpy(temp->message->subject, subject);
-	strcpy(temp->message->content, content);
-
+	temp->message->subject = malloc(sizeof(char)*rlp_strlen(subject));
+	temp->message->content = malloc(sizeof(char)*rlp_strlen(content));
+	rlp_encode_str(temp->sender, sender);
+	rlp_encode_str(temp->message->subject, subject);
+	rlp_encode_str(temp->message->content, content);
 	temp->next = NULL;
 
 	return temp;
@@ -122,15 +126,68 @@ int enqueue_nodeMsg_t(nodeMsg_t* q, char* sender, char* subject, char* content) 
 
 void batch_populate_node(nodeMsg_t *front, char *sender, char *subject,
                          char *content) {
-
-	if(front==NULL)
-		return;
-
-	if(front->next!=NULL){
-		enqueue_nodeMsg_t(front, sender, subject, content);
-		batch_populate_node(front->next, sender, subject, content);
-		return;
-	}
+	if(front==NULL) return;
 	enqueue_nodeMsg_t(front, sender, subject, content);
+	if(front->next!=NULL)
+		batch_populate_node(front->next, sender, subject, content);
 	return;
+}
+
+int populate_individual_node(nodeMsg_t *front, int ID, char *sender, char *subject,
+                              char *content) {
+	// Return an error if the first node is null.
+	if(front==NULL)
+		return -1;
+
+	// If the ID's match, populate the node.
+	if(front->ID == ID){
+		enqueue_nodeMsg_t(front, sender, subject, content);
+		return 1;
+	}
+
+	/*
+	  Check if we aren't at the last node.  If we are, that means
+	  that the previous condition which checks for the Identifier
+	  failed
+	*/
+	if(front->next!=NULL)
+		return populate_individual_node(front->next, ID, sender, subject, content);
+
+	// The code can only reach this case if it is the last node in the linkedlist.
+
+	return -1;
+}
+
+void empty_all_qs(nodeMsg_t *front) {
+
+	free_item(front->front);
+	front->size = 0;
+	if(front->next != NULL){
+		return empty_all_qs(front->next);
+	}
+	return;
+
+}
+
+int empty_q(nodeMsg_t *front, int identifier) {
+
+	if(front->next == NULL)
+		return -1;
+
+	if(front->next->ID == identifier){
+		nodeMsg_t* next = front->next;
+		next->size = 0;
+		// Free all the Qs items
+		free_item(next->front);
+		return 1;
+	}
+
+	/*
+	  If the next node isn't null or an identifier, go to the next
+	  node to repeat the process. This way, the result will bubble
+	  back up the stack.
+	*/
+	return empty_q(front->next, identifier);
+
+
 }

@@ -11,5 +11,9 @@ void listItems(Item *Item);
 void batch_populate_node(nodeMsg_t* front, char* sender, char* subject, char* content);
 int removeQ(nodeMsg_t *front, int identifier);
 int enqueue_nodeMsg_t(nodeMsg_t* q, char* sender, char* subject, char* content);
-
+int populate_individual_node(nodeMsg_t *front, int ID, char *sender,
+                             char *subject, char *content);
+int empty_q(nodeMsg_t *front, int identifer);
+void empty_all_qs(nodeMsg_t *front);
+void free_individual_item(Item* Item);
 #endif

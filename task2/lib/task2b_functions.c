@@ -71,12 +71,52 @@ int deleteQ(MsgQs_t* q, int identifier){
 
 // returns an error if queue id doesn't exist
 void sendMessageBatch(MsgQs_t *q, char* sender, char* subject, char* content) {
-	size_t size = q->size;
-	/* nodeMsg_t* front = q->front; */
-	/* while(size > 0){ */
-	/* 	enqueue_nodeMsg_t(front, sender, subject, content); */
-	/* 	front = front->next; */
-	/* 	size--; */
-	/* } */
 	batch_populate_node(q->front, sender, subject, content);
+}
+
+int sendMessage(MsgQs_t *q, void *ID, char *sender, char *subject,
+                 char *content) {
+	if (ID == NULL){
+		sendMessageBatch(q, sender, subject, content);
+		return 1;
+	}
+	return populate_individual_node(q->front,(int) ID, sender, subject, content);
+}
+
+int purgeQs(MsgQs_t *q, void* identifier) {
+	if(identifier == NULL){
+		empty_all_qs(q->front);
+		return 1;
+	}
+
+	if(q->front->ID == (int)identifier){
+		nodeMsg_t* temp = q->front;
+		free_item(temp->front);
+		q->front = temp->next;
+		return 1;
+	}
+	return empty_q(q->front,(int)identifier);
+}
+
+int receiveMessages(MsgQs_t *q, int identifier, size_t num_of_messages) {
+	nodeMsg_t* front = q->front;
+	for (size_t i = 0; i < q->size; ++i) {
+		if (front->ID == identifier) {
+			num_of_messages = num_of_messages > front->size ? front->size : num_of_messages;
+			Item* front_item;
+			for (size_t j = 0; j < num_of_messages; ++j) {
+				// Link the front to the next item.
+				front_item = front->front;
+				printItem(front_item);
+				free_individual_item(front_item);
+				front->front = front_item->next;
+				front->size--;
+			}
+			return 1;
+		}else {
+			front = front->next;
+		}
+	}
+	return -1;
+
 }

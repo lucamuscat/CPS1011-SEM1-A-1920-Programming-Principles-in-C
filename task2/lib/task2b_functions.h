@@ -10,5 +10,8 @@ void unloadMsgQs(MsgQs_t* q);
 void sendMessageBatch(MsgQs_t* q, char* sender, char* subject, char* content);
 void listQs(nodeMsg_t* front);
 int deleteQ(MsgQs_t* q, int identifier);
-
+int sendMessage(MsgQs_t *q, void *ID, char *sender, char *subject,
+				char *content);
+int purgeQs(MsgQs_t *q, void *identifier);
+int receiveMessages(MsgQs_t *q, int identifier, size_t num_of_messages);
 #endif
