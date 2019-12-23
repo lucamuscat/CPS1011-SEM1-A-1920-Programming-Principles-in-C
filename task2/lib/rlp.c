@@ -63,6 +63,7 @@ void encode_q(node* Queue, char* buffer) {
 		strcat(buffer, message);
 	}
 }
+
 char* str_encode_node(node* Queue) {
 	// find total number of bytes
 	char* buffer;
@@ -85,4 +86,29 @@ char* str_encode_node(node* Queue) {
 	buffer[1] = '\0';
 	encode_q(Queue, buffer);
 	return buffer;
+}
+
+// Returns the size of the rlp encoded string.
+size_t rlp_strlen(char* string) {
+	size_t length = strlen(string);
+	if(length < 56)
+		return length + 2;
+	// We are adding one for the offset
+	return length + byte_len(length) + 2;
+
+}
+
+void rlp_encode_str(char* dest, char* src) {
+	size_t size = strlen(src);
+
+	if(size == 1){
+		dest[0] = src[0];
+		dest[1] = '\0';
+	} else if (size < 56){
+		dest[0] = 0x80+size;
+		dest[1] = '\0';
+	} else {
+		strcpy(dest, encode_long_object(size, 0xb7));
+	}
+	strcat(dest, src);
 }
