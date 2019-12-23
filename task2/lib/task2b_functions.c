@@ -42,6 +42,7 @@ int createQ(MsgQs_t *q, int identifier) {
 void unloadMsgQs(MsgQs_t *q) {
 	nodeMsg_t* node = q->front;
 	free_node(node);
+	q->size = 0;
 }
 
 void listQs(nodeMsg_t *front) {
