@@ -155,6 +155,8 @@ int persistQ(MsgQs_t *q, int identifier){
 	sprintf(filename, "%d.dat", identifier);
 	if((file = fopen(filename, "w")) == NULL){
 		printf("ERROR OPENING %s", filename);
+		fclose(file);
+		return -1;
 	}
 	for (size_t i = 0; i < node->index; ++i) {
 		fputs(strcat(node->messages[i],"\n"), file);
