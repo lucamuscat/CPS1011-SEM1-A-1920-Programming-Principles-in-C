@@ -14,4 +14,5 @@ int sendMessage(MsgQs_t *q, void *ID, char *sender, char *subject,
 				char *content);
 int purgeQs(MsgQs_t *q, void *identifier);
 int receiveMessages(MsgQs_t *q, int identifier, size_t num_of_messages);
+int persistQ(MsgQs_t* MsgQ, int identifier);
 #endif

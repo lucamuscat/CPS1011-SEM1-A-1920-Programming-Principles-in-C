@@ -95,20 +95,31 @@ size_t rlp_strlen(char* string) {
 		return length + 2;
 	// We are adding one for the offset
 	return length + byte_len(length) + 2;
-
 }
 
-void rlp_encode_str(char* dest, char* src) {
-	size_t size = strlen(src);
+void rlp_encode_str(char *dest, char *src) {
+  size_t size = strlen(src);
+  if (size == 1) {
+    dest[0] = src[0];
+    dest[1] = '\0';
+  } else if (size < 56) {
+    dest[0] = 0x80 + size;
+    dest[1] = '\0';
+  } else {
+    strcpy(dest, encode_long_object(size, 0xb7));
+  }
+  strcat(dest, src);
+}
 
-	if(size == 1){
-		dest[0] = src[0];
-		dest[1] = '\0';
-	} else if (size < 56){
-		dest[0] = 0x80+size;
-		dest[1] = '\0';
+char* rlp_encode_list(size_t length) {
+	char* buffer;
+	if(length < 56){
+		buffer = malloc(sizeof(char)*2);
+		buffer[0] = 0xc0 + length;
+		buffer[1] = '\0';
+		return buffer;
 	} else {
-		strcpy(dest, encode_long_object(size, 0xb7));
+		return encode_long_object(length, 0xf7);
 	}
-	strcat(dest, src);
+	return NULL;
 }

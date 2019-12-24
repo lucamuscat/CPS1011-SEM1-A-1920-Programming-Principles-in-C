@@ -15,5 +15,6 @@ int populate_individual_node(nodeMsg_t *front, int ID, char *sender,
                              char *subject, char *content);
 int empty_q(nodeMsg_t *front, int identifer);
 void empty_all_qs(nodeMsg_t *front);
-void free_individual_item(Item* Item);
+void free_individual_item(Item *Item);
+size_t update_node_bytes(Item* front);
 #endif
