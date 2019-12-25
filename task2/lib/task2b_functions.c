@@ -180,9 +180,9 @@ int persistQ(MsgQs_t* MsgQ, int identifier) {
 		char* item_encoding = rlp_encode_list(front->bytes);
 		fwrite(item_encoding, sizeof(char), strlen(item_encoding), file);
 		fwrite(front->sender, sizeof(char), strlen(front->sender), file);
-		//char* expiry_encoding = str_encode_length(byte_len(front->expiry));
-		//fwrite(expiry_encoding, sizeof(char), strlen(expiry_encoding), file);
-		//fwrite(&front->expiry, sizeof(long int), 1, file);
+		char* expiry_encoding = str_encode_length(byte_len(front->expiry));
+		fwrite(expiry_encoding, sizeof(char), strlen(expiry_encoding), file);
+		fwrite(&front->expiry, sizeof(long int), 1, file);
 		char* message_encoding = rlp_encode_list(front->message->bytes);
 		fwrite(message_encoding , sizeof(char), strlen(message_encoding), file);
 		char* subject = front->message->subject;
@@ -211,6 +211,13 @@ void skip_list(FILE *file) {
 			byte_length--;
 		}
 	}
+}
+
+long int decode_expiry(FILE *file) {
+	unsigned char ch = fgetc(file);
+	long int temp;
+	fread(&temp, sizeof(long int), 1, file);
+	return temp;
 }
 
 char* decode_string(FILE *file) {
@@ -256,12 +263,14 @@ int restoreQ(MsgQs_t *q, int identifier) {
 	}
 	skip_list(file);
 	char* sender;
+	long int expiry;
 	char* subject;
 	char* content;
 	while(!feof(file)){
 		skip_list(file);
 		if(!feof(file)){
 			sender = decode_string(file);
+			expiry = decode_expiry(file);
 			skip_list(file);
 			subject = decode_string(file);
 			content = decode_string(file);
