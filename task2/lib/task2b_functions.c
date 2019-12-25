@@ -180,9 +180,9 @@ int persistQ(MsgQs_t* MsgQ, int identifier) {
 		char* item_encoding = rlp_encode_list(front->bytes);
 		fwrite(item_encoding, sizeof(char), strlen(item_encoding), file);
 		fwrite(front->sender, sizeof(char), strlen(front->sender), file);
-		char* expiry_encoding = str_encode_length(byte_len(front->expiry));
-		fwrite(expiry_encoding, sizeof(char), strlen(expiry_encoding), file);
-		fwrite(&front->expiry, sizeof(long int), 1, file);
+		//char* expiry_encoding = str_encode_length(byte_len(front->expiry));
+		//fwrite(expiry_encoding, sizeof(char), strlen(expiry_encoding), file);
+		//fwrite(&front->expiry, sizeof(long int), 1, file);
 		char* message_encoding = rlp_encode_list(front->message->bytes);
 		fwrite(message_encoding , sizeof(char), strlen(message_encoding), file);
 		char* subject = front->message->subject;
@@ -193,4 +193,79 @@ int persistQ(MsgQs_t* MsgQ, int identifier) {
 	}
 	fclose(file);
 	return 1;
+}
+
+void skip_list(FILE *file) {
+	unsigned char ch = fgetc(file);
+	if(ch >= 0xc0 && ch <= 0xf7){
+		/*
+		  Self encoding list
+		  Since the encoding is only 1 byte long the next fgetc will get a valid char
+		*/
+		return;
+	} else if(ch >= 0xf8 && ch <= 0xff){
+		size_t byte_length = ch - 0xf7;
+		while(byte_length > 0){
+			// Skip the byte characters representing the list length
+			fgetc(file);
+			byte_length--;
+		}
+	}
+}
+
+char* decode_string(FILE *file) {
+	unsigned char ch = fgetc(file);
+	char* buffer;
+	if(ch < 0x80){
+		buffer = malloc(sizeof(char) * 2);
+		buffer[0] = ch;
+		buffer[1] = '\0';
+		return buffer;
+	} else if (ch >= 0x80 && ch < 0xb8 ){
+		// 0x7f instead of 0x80 due to the fact that if we get 0x80 and minus it by 0x80 we will get a length of 0
+		size_t length = ch - 0x80;
+		buffer = malloc(sizeof(char) * length + 1);
+		fread(buffer, sizeof(char), length, file);
+		buffer[length] = '\0';
+		return buffer;
+	} else if (ch >= 0xb8 && ch < 0xbf ){
+		size_t byte_length = ch - 0xb7;
+		size_t size = 0;
+		for (size_t i = 0; i < byte_length; ++i) {
+			size |= fgetc(file)<<8*(byte_length-1-i);
+		}
+		buffer = malloc(sizeof(char) * size);
+		fread(buffer, sizeof(char), size, file);
+		buffer[size] = '\0';
+		return buffer;
+	}
+}
+
+
+
+
+// Precondition: MsgQs_t is created from before hand.
+int restoreQ(MsgQs_t *q, int identifier) {
+	FILE* file;
+	char file_name[15];
+	sprintf(file_name, "%d.dat", identifier);
+	if((file = fopen(file_name, "r")) == NULL){
+		printf("ERROR OPENING %s", file_name);
+		fclose(file);
+		return -1;
+	}
+	skip_list(file);
+	char* sender;
+	char* subject;
+	char* content;
+	while(!feof(file)){
+		skip_list(file);
+		if(!feof(file)){
+			sender = decode_string(file);
+			skip_list(file);
+			subject = decode_string(file);
+			content = decode_string(file);
+			sendMessage(q, (void*)identifier, sender, subject, content);
+		}
+	}
 }
