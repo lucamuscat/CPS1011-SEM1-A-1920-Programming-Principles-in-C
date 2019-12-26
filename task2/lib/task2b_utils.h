@@ -16,5 +16,8 @@ int populate_individual_node(nodeMsg_t *front, int ID, char *sender,
 int empty_q(nodeMsg_t *front, int identifer);
 void empty_all_qs(nodeMsg_t *front);
 void free_individual_item(Item *Item);
-size_t update_node_bytes(Item* front);
+size_t update_node_bytes(Item *front);
+void skip_list(FILE *file);
+long int decode_expiry(FILE *file);
+char* decode_string(FILE *file);
 #endif
