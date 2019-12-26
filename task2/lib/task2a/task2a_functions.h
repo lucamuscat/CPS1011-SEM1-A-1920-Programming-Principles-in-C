@@ -26,13 +26,14 @@
 */
 
 /*
-  Node represets a message queue. Each node needs to contain a null byte terminated char array (message) and an identifier (ID)
+  Node represets a message queue. Each node needs to contain a null byte
+  terminated char array (message) and an identifier (ID)
 */
 
 typedef struct node {
-	char *messages[MESSAGE_LIMIT];
-    int ID;
-	unsigned int index;
+  char *messages[MESSAGE_LIMIT];
+  int ID;
+  unsigned int index;
 } node;
 
 /*
@@ -43,18 +44,17 @@ typedef struct node {
   Size will be used to determine where the head of the queue is.
 */
 typedef struct MsgQs_t {
-	// This needs to be a pointer to nodes since we need to have the
-	// ability to relinquish resources from specific nodes.
-	node *nodes[NODE_LIMIT];
-	unsigned int index;
+  // This needs to be a pointer to nodes since we need to have the
+  // ability to relinquish resources from specific nodes.
+  node *nodes[NODE_LIMIT];
+  unsigned int index;
 } MsgQs_t;
-
 
 /*
   Since the MsgQs_t has to be placed in heap, this function will
   malloc, give it default values and return a pointer to it.
 */
-MsgQs_t* initializeMsgQs();
+MsgQs_t *initializeMsgQs();
 
 /*
   Simply free the MsgQs_t which is passed through the parameter. Of
@@ -109,7 +109,7 @@ specified message queue
 
 @return: Return SEND_ERROR if identifier doesn't exist
 */
-int sendMessage(MsgQs_t *q, void *identifier, char* message);
+int sendMessage(MsgQs_t *q, void *identifier, char *message);
 
 /*
   Sends a message to all of the nodes in MsgQs_t
@@ -124,7 +124,7 @@ void sendMessageBatch(MsgQs_t *q, char message[MESSAGE_LIMIT]);
   @param queue: MsgQs_t on which this function will operate.
   @param indetifier: Identifier of node to clear.
 */
-int purgeQs(MsgQs_t *q, void* indentifier);
+int purgeQs(MsgQs_t *q, void *indentifier);
 
 /*
   Experiment with serialization and come back here once you figured it

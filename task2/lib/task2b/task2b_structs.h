@@ -9,9 +9,9 @@
 #include <time.h>
 
 struct Message {
-	char* subject;
-	char* content;
-	size_t bytes;
+  char *subject;
+  char *content;
+  size_t bytes;
 };
 typedef struct Message Message;
 
@@ -21,30 +21,29 @@ typedef struct Message Message;
 */
 
 struct Item {
-	char* sender;
-	Message* message;
-	time_t expiry;
-	struct Item* next;
-	size_t bytes;
+  char *sender;
+  Message *message;
+  time_t expiry;
+  struct Item *next;
+  size_t bytes;
 };
 typedef struct Item Item;
 
 struct nodeMsg_t {
-	Item* front;
-	Item* rear;
-	int ID;
-	size_t size;
-	struct nodeMsg_t *next;
-	size_t bytes;
+  Item *front;
+  Item *rear;
+  int ID;
+  size_t size;
+  struct nodeMsg_t *next;
+  size_t bytes;
 };
 typedef struct nodeMsg_t nodeMsg_t;
 
 typedef struct MsgQs_t {
-	size_t size;
-	nodeMsg_t *front;
-	nodeMsg_t *rear;
-	size_t bytes;
+  size_t size;
+  nodeMsg_t *front;
+  nodeMsg_t *rear;
+  size_t bytes;
 } MsgQs_t;
-
 
 #endif
