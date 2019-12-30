@@ -14,5 +14,6 @@ int main(void) {
 	unloadMsgQs(test);
 	restoreQ(test, 110);
 	listQs(test->front);
+	unloadMsgQs(test);
 	return 0;
 }

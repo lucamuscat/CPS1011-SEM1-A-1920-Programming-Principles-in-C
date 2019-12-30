@@ -10,9 +10,6 @@
 #define FULL_QUEUE_ERROR -1
 #define EMPTY_ERROR -2
 
-#define MESSAGE_LENGTH 256
-#define LIMIT 25
-
 MsgQs_t *initializeMsgQs() {
   MsgQs_t *q = (MsgQs_t *)malloc(sizeof(MsgQs_t));
   q->size = 0;
@@ -27,9 +24,12 @@ int createQ(MsgQs_t *q, int identifier) {
     return -1;
   nodeMsg_t *tmp;
   tmp = malloc(sizeof(nodeMsg_t));
+  // Setting the next pointer to null is important for the recursive
+  // methods
   tmp->next = NULL;
   tmp->ID = identifier;
   tmp->size = 0;
+  // A basic enqueue procedure.
   if (is_empty(q)) {
     q->front = tmp;
     q->rear = tmp;
@@ -41,12 +41,14 @@ int createQ(MsgQs_t *q, int identifier) {
   return 1;
 }
 
+// Free everything.
 void unloadMsgQs(MsgQs_t *q) {
   nodeMsg_t *node = q->front;
   free_node(node);
   q->size = 0;
 }
 
+// List everything.
 void listQs(nodeMsg_t *front) {
 
   if (front->size == 0) {
@@ -78,6 +80,8 @@ void sendMessageBatch(MsgQs_t *q, char *sender, char *subject, char *content) {
 
 int sendMessage(MsgQs_t *q, void *ID, char *sender, char *subject,
                 char *content) {
+  // If the provided ID is null, treat it as unspecified and use sendMessageBatch.
+  // otherwise, sendMessage to a single nodeMsg_t (if it exists ofcourse).
   if (ID == NULL) {
     sendMessageBatch(q, sender, subject, content);
     return 1;
@@ -102,6 +106,14 @@ int purgeQs(MsgQs_t *q, void *identifier) {
 
 int receiveMessages(MsgQs_t *q, int identifier, size_t num_of_messages) {
   nodeMsg_t *front = q->front;
+  /*
+	Find the node which the ID belongs to.  Make sure that the
+	num_of_messages doesn't skip the max number of messages.  Once
+	found, display its contents, free it and do a normal dequeue
+	procedure.
+
+  */
+
   for (size_t i = 0; i < q->size; ++i) {
     if (front->ID == identifier) {
       num_of_messages =
@@ -176,6 +188,7 @@ int persistQ(MsgQs_t *MsgQ, int identifier) {
   char *list_encoding = rlp_encode_list(q->bytes);
   fwrite(rlp_encode_list(q->bytes), sizeof(char), strlen(list_encoding), file);
   Item *front = q->front;
+  // This loop writes out everything into a file.
   for (size_t i = 0; i < q->size; ++i) {
     char *item_encoding = rlp_encode_list(front->bytes);
     fwrite(item_encoding, sizeof(char), strlen(item_encoding), file);
@@ -210,6 +223,10 @@ int restoreQ(MsgQs_t *q, int identifier) {
   long int expiry;
   char *subject;
   char *content;
+
+  // Decoding this takes a specific pattern.
+  // Analyze a .dat file which is produced by the code
+  // to see it.
   while (!feof(file)) {
     skip_list(file);
     if (!feof(file)) {

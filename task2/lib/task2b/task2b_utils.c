@@ -4,8 +4,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-// The recursed data can be saved into a hashmap
-// but that will make my current solution more complex.
+
+/*
+  Most of these functions are recursive in nature,
+*/
+
 _Bool contains_id(nodeMsg_t *front, int identifier) {
   if (front == NULL)
     return 0;
@@ -37,7 +40,9 @@ void free_item(Item *Item) {
   return;
 }
 
-// Free everything using tail-recursion.
+// Free everything using tail-recursion.  This way, we won't need a
+// pointer to the previous element Since all we need to do is go back
+// up the stack.
 void free_node(nodeMsg_t *node) {
   if (node->next != NULL)
     free_node(node->next);
@@ -53,6 +58,11 @@ void printItem(Item *Item) {
   printf("Expiry: %llu\n", Item->expiry);
 }
 
+/*
+  Is the next node null? If so, pass the next node into listItems.
+  If the next node isn't null just bubble up the stack.
+ */
+
 void listItems(Item *Item) {
   printItem(Item);
   if (Item->next != NULL)
@@ -62,8 +72,8 @@ void listItems(Item *Item) {
 
 int removeQ(nodeMsg_t *front, int identifier) {
   /*
-        Are we on the rear node? If so return an error since the ID
-        doesn't exist.
+	Are we on the rear node? If so return an error since the ID
+	doesn't exist.
   */
   if (front->next == NULL)
     return -1;
@@ -161,6 +171,7 @@ int populate_individual_node(nodeMsg_t *front, int ID, char *sender,
   return -1;
 }
 
+// Takes the front of a MsgQs_t.
 void empty_all_qs(nodeMsg_t *front) {
 
   free_item(front->front);
@@ -171,6 +182,7 @@ void empty_all_qs(nodeMsg_t *front) {
   return;
 }
 
+// Empties a queue with a specific ID.
 int empty_q(nodeMsg_t *front, int identifier) {
 
   if (front->next == NULL)
@@ -206,6 +218,11 @@ size_t update_node_bytes(Item *front) {
   return front->bytes;
 }
 
+/*
+  Skip the list encoding of the file by moving the file pointer
+  accordingly.
+*/
+
 void skip_list(FILE *file) {
   unsigned char ch = fgetc(file);
   if (ch >= 0xc0 && ch <= 0xf7) {
@@ -232,6 +249,11 @@ long int decode_expiry(FILE *file) {
   return temp;
 }
 
+
+/*
+  Decode the string according to the character obtained.
+  The algorithm followed can be found in the Ethereum RLP wiki.
+*/
 char *decode_string(FILE *file) {
   unsigned char ch = fgetc(file);
   char *buffer;

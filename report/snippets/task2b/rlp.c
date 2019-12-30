@@ -32,19 +32,13 @@ size_t byte_len(size_t number) {
   both strings and arrays.
 */
 char *encode_long_object(size_t length, char offset) {
-  size_t byte_length =
-	byte_len(length); // +2 to hold the offset and the null byte.
+  size_t byte_length = byte_len(length); // +2 to hold the offset and the null byte.
   size_t buffer_size = sizeof(char) * (byte_length + 2);
   char *buffer = malloc(buffer_size);
   // dont forget to free
   buffer[0] = offset + byte_length;
   buffer[buffer_size - 1] = '\0';
   size_t j = 0;
-  /*
-	stuff the each byte of the integer into a char by exploiting the
-	fact that assigning an int to a char truncates everything but the
-	last 8 bits
-  */
   for (size_t i = buffer_size - 2; i > 0; --i, ++j)
     buffer[i] = length >> (8 * j);
   return buffer;

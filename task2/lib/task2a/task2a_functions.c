@@ -77,15 +77,15 @@ int deleteQ(MsgQs_t *q, int identifier) {
 int sendIndividualMessage(node *node, char *message) {
   if (node->index < MESSAGE_LIMIT) {
     /*
-                  strcpy is used instead of assigning the message arguement
-                  message[node->index] since side effects might occur on the
-                  value referenced by the message pointer arguement.
-                  This will cause unexpected bugs when a reference to a
-                  mutable char array is passed into the message
-                  arguement. Once the mutable char array is modified outside
-                  of the function's scope, the value saved in the node will
-                  also change.
-            */
+          strcpy is used instead of assigning the message arguement
+          message[node->index] since side effects might occur on the
+          value referenced by the message pointer arguement.
+          This will cause unexpected bugs when a reference to a
+          mutable char array is passed into the message
+          arguement. Once the mutable char array is modified outside
+          of the function's scope, the value saved in the node will
+          also change.
+    */
     node->messages[node->index] = malloc(sizeof(char) * CHAR_LIMIT);
     // Strncpy will also prevent messages longer than CHAR_LIMIT
     // from being sent.
@@ -102,6 +102,10 @@ void sendMessageBatch(MsgQs_t *q, char *message) {
   }
 }
 
+/*
+  If the identifer is null, use sendMessageBatch, otherwise just send
+  the message
+*/
 int sendMessage(MsgQs_t *q, void *identifier, char *message) {
   if (identifier == NULL)
     sendMessageBatch(q, message);
@@ -144,6 +148,7 @@ int purgeQs(MsgQs_t *q, void *identifier) {
 int persistQ(MsgQs_t *q, int identifier) {
   node *node;
   for (size_t i = 0; i < q->index; ++i) {
+    // Go through all the nodes and check their ID
     if (q->nodes[i]->ID == identifier)
       node = q->nodes[i];
   }
@@ -159,8 +164,11 @@ int persistQ(MsgQs_t *q, int identifier) {
     return -1;
   }
   for (size_t i = 0; i < node->index; ++i) {
+	// Go through each node and place it in the file, seperated by a
+	// new line.
     fputs(strcat(node->messages[i], "\n"), file);
   }
+  // Close the stream
   fclose(file);
   return SUCCESS;
 }
@@ -200,7 +208,7 @@ int receiveMessages(MsgQs_t *q, int identifier, size_t num_of_messages) {
   }
   if (node == NULL)
     return -1;
-
+  // Print it then free it.
   while (node->index > 0 && num_of_messages > 0) {
     printf("%d: %s", node->index, node->messages[node->index - 1]);
     free(node->messages[node->index]);

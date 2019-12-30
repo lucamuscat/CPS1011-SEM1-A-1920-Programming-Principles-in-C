@@ -50,13 +50,6 @@ void str_generate(mystr_t *array, int i);
 int str_shuffle(mystr_t *array);
 
 /*
-  Sorts an array in ascending order. Bubble sort is going to be used
-  since it fits well with the strcmp() function. This function will
-  have to go hand in hand with the generate function. generate() will
-  need to produce a string which seperates each element of the array
-  with a null byte. Then this data will be tokenized via the strtok()
-  function. This means that generate will have to dynamically allocate memory
-  (or just allocate the max number of bytes which can occur).
   @param *array: Pointer to mystr_t struct which needs to be sorted.
   @return: Returns a pointer to a sorted array. This is due to the
   fact that the question asked to return a sorted array and not to

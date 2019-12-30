@@ -73,6 +73,7 @@ int str_shoot(mystr_t *array){
 	}
 	return SHOT;
 }
+// Extract the shoot_value from the mystr_t var.
 char* str_target(mystr_t *array){
 	if(strcmp(array->shoot_value, EMPTY) == 0)
 		return "error";
@@ -90,6 +91,11 @@ void str_swap(char* a, char* b){
 	strcpy(a, b);
 	strcpy(b, temp);
 }
+
+/*
+  Use the predefined 2d char array to compare values this is
+  convenient as each index maps to their respective number.
+*/
 int* str_to_int(mystr_t *array){
 	int *temp = malloc(sizeof(int) * array->size);
 	for(size_t i = 0; i < array -> size; ++i){
@@ -104,6 +110,7 @@ int* str_to_int(mystr_t *array){
 	return temp;
 }
 
+// Using selection sort.
 mystr_t str_sort(mystr_t *array){
 	mystr_t temp = *array;
 	size_t min_index;
