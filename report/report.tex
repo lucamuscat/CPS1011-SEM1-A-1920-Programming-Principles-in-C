@@ -38,7 +38,12 @@
         \caption{#2}
         \label{lst: #3}
     \end{code}
+  }
+
+\newcommand{\explainline}[2]{
+  \textbf{Line #1} & #2 \\ \\
 }
+
 % #1 - Scale
 % #2 - Image path
 % #3 - Caption
@@ -122,8 +127,9 @@ A helper function was also created to help with the creation of \emph{myint\_t} 
 
   \sourcecode{snippets/generate_header.c}{Generate Function Prototypes}{int_generate_header}
 
-  \sourcecode{snippets/generate_implementation.c}{Generate Function Implementation}{int_generate_implementation}
   In lines 2 and 3 of listing \ref{lst: int_generate_implementation}, a conditional statement was added to keep the user from providing a number smaller than 1. Line 11 implements a basic overflow handling mechanism which checks that i is not in range of overflowing. Inside of this conditional statement, a simple for loop is used to populate the array.
+
+  \sourcecode{snippets/generate_implementation.c}{Generate Function Implementation}{int_generate_implementation}
 
   \subsubsection{shuffle()}
   The shuffle function implements the Fisher-Yates algorithm which is a basic shuffle algorithm\footnote{Fisher-Yates Shuffle Algorithm Wikipedia: \url{https://en.wikipedia.org/wiki/Fisher\%E2\%80\%93Yates_shuffle}}. In short, i starts at the end of the array and is also used as a bound. With every iteration, \emph{i} is decremented, reducing the possible range of random numbers which can be generated. Once a random number is generated, the element at i will be swapped with the random number. The following is an implementation of the fisher-yates shuffle algorithm. Kindly note that the random function used can be found in the \emph{utils.c} file.
@@ -314,29 +320,76 @@ A helper function was also created to help with the creation of \emph{myint\_t} 
 
   Due to the complexity of  this solution (A queue of queues), a substantial amount of structs were created in order to ease the process of creating this solution. Each queue struct (MsgQs\_t and nodeMsg\_t) contains a size member, this is very useful for writing iterative solutions as opposed to recursive ones. One may also notice that each struct contains a common member called bytes. This member is supposed to store the  number of bytes written into it. This will help with RLP encoding later down the line. Since pre and post message delivery is encoded in RLP (and will be stored in the the struct containing RLP encoding) we need to ignore the number of bytes consumed by the RLP encoding itself.
 
-  \sourcecode{snippets/task2b_structs.c}{Structs used in task2b (found in task2b_structs.h)}{task2b_structs}
+  \sourcecode{snippets/task2b_structs.c}{Structs used in task2b (found in task2b\_structs.h)}{task2b_structs}
 
   \subsubsection{initializeMsgQs}
   This method returns an empty MsgQs\_t with some initialized values.
 
   \sourcecode{snippets/task2b/initializeMsgQs.c}{initializeMsgQs function implementation}{task2b_initializeMsgQs}
 
+  \begin{longtable}{l p{10cm}}
+    \explainline{2}{Allocate enough memory to the \emph{MsgQs\_t} struct.}
+    \explainline{3}{Initialize the size of the message queue as 0.}
+    \explainline{4-6}{Initialize the front and the rear of the message queue as NULL and return its pointer.}
+  \end{longtable}
+
+  \image{1}{images/gdbInitializeMsgQs.JPG}{The values of an initialized Message Queue (gdb output)}{initializeMsgQsOutput}
+
+\clearpage
     \subsubsection{unloadMsgQs}
   This method makes use of the free\_node method which checks if the next node in the linked list is null, if it isn't null, it will call itself again but passes the next node in the linked list as an argument. This continues until the next node is NULL. Once the next node is NULL, all the items will be freed using the free\_item method which also uses tail recursion to free the individual items. Tail recursion was used as opposed to a normal iterative approach since an iterative approach would require a doubly linked list. However, using recursion, we can just go to the very last object of the linked list, free all of its contents (and the memory allocated for holding the pointers) and simply bubble up the recursion stack freeing everything else in the process.
 
-  \sourcecode{snippets/task2b/unloadMsgQs.c}{unloadMsgQs method implementation}{unloadMsgQs}
   \sourcecode{snippets/task2b/free_node.c}{free\_node implementation}{free_node}
+  \begin{longtable}{l p{10cm}}
+    \explainline{5}{If the next node isn't null, pass the next node into the free\_node method.}
+    \explainline{7}{Once the last node has been reached, the items inside of it will be freed recursively (in a similar manner to how the node is being freed).}
+    \explainline{8}{Free the memory assigned to the node (pointers are allocated memory too).}
+  \end{longtable}
+
+  \clearpage
+
   \sourcecode{snippets/task2b/free_item.c}{free\_item implementation}{free_item}
+  \begin{longtable}{l p{10cm}}
+    \explainline{2}{Check if the next Item in the linked list isn't NULL}
+    \explainline{3}{If the next node isn't null, pass it into the free\_item method recursively.}
+    \explainline{4}{Free all of the contents of the Item}
+    \explainline{5}{Bubble up the recursion stack, once the end if reached, the popped stack will return to line 3 and continue this process until the stack frame is empty.}
+  \end{longtable}
+
+  \clearpage
+
   \sourcecode{snippets/task2b/free_individual_item.c}{free\_individual\_item implementation}{free_ind_item}
+  \sourcecode{snippets/task2b/unloadMsgQs.c}{unloadMsgQs method implementation}{unloadMsgQs}
+  \begin{longtable}{l p{10cm}}
+    \explainline{3-4}{Provide the free\_node method with the front of the message queue.}
+    \explainline{5}{Set its size to 0 (since the message queue is being emptied.}
+  \end{longtable}
+
+  \image{1}{images/unloadMsgQsOutput.JPG}{unloadMsgQs results. As one may observe, the size is set to 0 and its members are all uninitialized.}{unloadMsgQsOutput}
+
+\clearpage
 
 
   \subsubsection{createQ}
   % add description of contains_id
   The createQ method goes through a simple enqueue process to append the new node into the message queue.
 
+  % place a snippet of contains_id
+  % update createQ.c and free_item snippet
   \sourcecode{snippets/task2b/createQ.c}{createQ implementation}{task2b_createQ}
 
-  The is\_empty function simple checks if the size of the message queue is equal to 0.
+  \begin{longtable}{l p{10cm}}
+    \explainline{3}{Check if the ID provided in the arguments exists}
+    \explainline{4}{Return -1 if \emph{contains\_id} returns a 0.}
+    \explainline{5-11}{Allocate enough memory to a temporary variable, set the next element in the linked list to NULL (this is done to identify that this is the most recent node), initialize the size to zero.}
+    \explainline{13}{Checks if the message queue is empty}
+    \explainline{14-15}{If the message queue is empty, set the front and the rear of the message queue to the temporary variable (the front and the rear both need to be initialized).}
+    \explainline{17-18}{Otherwise, set the rear node's next pointer to tmp, then set the rear to tmp. This means that the newest element in the linked list is always on the rear and is always connected to the node preceeding it.}
+  \end{longtable}
+
+  The result of the method \emph{createQ(test, 110)}, test being an initialized MsgQs\_t pointer; (ie. it has been assigned to the result of initializeMsgQs) can be seen in figure \ref{fig: createQOutput}
+
+  \image{1}{images/createQOutput.JPG}{createQ output.}{createQOutput}
 
   \clearpage
 
@@ -346,24 +399,26 @@ A helper function was also created to help with the creation of \emph{myint\_t} 
   \sourcecode{snippets/task2b/printItem.c}{printItem helper function}{printItem}
   \sourcecode{snippets/task2b/listItems.c}{listItems helper function}{listItems}
 
-  \begin{description}
-  \item [\textbf{Line 1}] Arguments takes the front of a nodeMsg\_t queue.
-  \item [\textbf{Line 2}] Display the item provided in the argument.
-  \item [\textbf{Line 3}] Check if there is another item in the item linked list.
-  \item [\textbf{Line 4}] Recursively call listItems with the next item in the item linked list.
-  \item [\textbf{Line 5}] Bubble up the recursion stack.
-  \end{description}
+  \begin{longtable}{l p{10cm}}
+    \explainline{1}{Arguments takes the front of a nodeMsg\_t queue.}
+    \explainline{2}{Display the item provided in the argument.}
+    \explainline{3}{Check if there is another item in the item linked list.}
+    \explainline{4}{Recursively call listItems with the next item in the item linked list.}
+    \explainline{5}{Bubble up the recursion stack.}
+  \end{longtable}
   \clearpage
 
   \sourcecode{snippets/task2b/listQs.c}{listQs method implementation}{listQs}
   \begin{longtable}{l p{10cm}}
-    \textbf{Line 2} & front argument takes the front of a MsgQs\_t queue. \\
-    \textbf{Line 3} & Check if the node is empty. \\
-    \textbf{Line 6-7} &  print the ID of the node and use listItems (providing the front of  the nodeMsg\_t). \\
-    \textbf{Line 9} & Check if the next node isn't null. \\
-    \textbf{Line 10} & recursively call listQs with the next node in the linked list.\\
-    \textbf{Line 12} & Bubble up the recursion stack. \\
+    \explainline{2}{front argument takes the front of a MsgQs\_t queue.}
+    \explainline{3}{Check if the node is empty.}
+    \explainline{6-7}{ print the ID of the node and use listItems (providing the front of  the nodeMsg\_t).}
+    \explainline{9}{Check if the next node isn't null.}
+    \explainline{10}{recursively call listQs with the next node in the linked list.}
+    \explainline{12}{Bubble up the recursion stack.}
   \end{longtable}
+
+  \image{0.5}{images/listQOutput.JPG}{Output Listing of listQs(). In this figure one may observe that text which was previously inputted has been displayed}{listQOutput}
 
   \clearpage
 
@@ -372,12 +427,12 @@ A helper function was also created to help with the creation of \emph{myint\_t} 
   \sourcecode{snippets/task2b/deleteQ.c}{deleteQ method implementation}{task2b_deleteQ}
 
   \begin{longtable}{l p{10cm}}
-    \textbf{Line 2} & Check if the front of the message queue matches the specified identifier. \\
-    \textbf{Line 3} & Create a temporary variable which holds the front (it's easier to write temp->front rather than q->front->front). \\
-    \textbf{Line 4} &  Call the recursive method free\_item providing the front of the node. \\
-    \textbf{Line 5} & Reassign the front of the message queue to the next node so that the front won't be empty. \\
-    \textbf{Line 6} & Return a success status.\\
-    \textbf{Line 8} & Call the recursive method removeQ, providing the front of the message queue and the specified identifier. \\
+    \explainline{2}{Check if the front of the message queue matches the specified identifier.}
+    \explainline{3}{Create a temporary variable which holds the front (it's easier to write temp->front rather than q->front->front).}
+    \explainline{4}{ Call the recursive method free\_item providing the front of the node.}
+    \explainline{5}{Reassign the front of the message queue to the next node so that the front won't be empty.}
+    \explainline{6}{Return a success status.}
+    \explainline{8}{Call the recursive method removeQ, providing the front of the message queue and the specified identifier.}
   \end{longtable}
 
   \clearpage
@@ -385,15 +440,21 @@ A helper function was also created to help with the creation of \emph{myint\_t} 
    \sourcecode{snippets/task2b/removeQ.c}{removeQ helper function}{removeQ}
 
    \begin{longtable}{l p{10cm}}
-    \textbf{Line 6-7} & Check if the next node is NULL, if it is, a failure status will be returned (one might think that the last node isn't being checked, but since the first node provided to removeQ has already been checked outside of removeQ, we will always check if the next node's ID matches the specified identifier). \\
-    \textbf{Line 9} & Does the next node's ID match the specified identifier? \\
-    \textbf{Line 11} &  Set its size to 0 since we are emptying it. \\
-    \textbf{Line 12} & Free all of the items it contains. \\
-    \textbf{Line 15} & Reassign the next pointer variable to the next nodes next pointer (this way, everything will remain linked).\\
-    \textbf{Line 17} & Free the node from  memory allocated to its members . \\
-    \textbf{Line 18} & Return a success status. \\
-    \textbf{Line 27} & Recursively call removeQ providing the next node in the provided nodeMsg\_t's linked list. If it hasn't been found, -1 will bubble up the recursion stack, otherwise, 1 will bubble up the recursion stack without having to go through all the other elements. \\
+    \explainline{6-7}{Check if the next node is NULL, if it is, a failure status will be returned (one might think that the last node isn't being checked, but since the first node provided to removeQ has already been checked outside of removeQ, we will always check if the next node's ID matches the specified identifier).}
+    \explainline{9}{Does the next node's ID match the specified identifier?}
+    \explainline{11}{ Set its size to 0 since we are emptying it.}
+    \explainline{12}{Free all of the items it contains.}
+    \explainline{15}{Reassign the next pointer variable to the next nodes next pointer (this way, everything will remain linked).}
+    \explainline{17}{Free the node from  memory allocated to its members .}
+    \explainline{18}{Return a success status.}
+    \explainline{27}{Recursively call removeQ providing the next node in the provided nodeMsg\_t's linked list. If it hasn't been found, -1 will bubble up the recursion stack, otherwise, 1 will bubble up the recursion stack without having to go through all the other elements.}
   \end{longtable}
+
+  In this example, the method \emph{deleteQ(test, 96)} will be called, test being the initialized message queue, and 96 being the ID of the node.
+
+  \image{1}{images/deleteQProof.JPG}{Proof that a node with ID 96 has been created.}{deleteQQueueProof}
+
+  \image{1}{images/deleteQOutput.JPG}{One can see that the rear node which previously had the ID of 96 is now uninitialized.}{deleteQOutput}
 
   \clearpage
 
@@ -403,23 +464,23 @@ A helper function was also created to help with the creation of \emph{myint\_t} 
   \sourcecode{snippets/task2b/rlp.c}{RLP Implementation}{rlp.c}
 
   \begin{longtable}{l p{10cm}}
-    \textbf{Line 11} & Measure the number of bytes a number takes. \\ \\
-    \textbf{Line 25} & Pass the number into a log2 function (binary is base 2, this will help us find the number of bits), floor it to round down and add 1 to make up for any truncated bits. \\ \\
-    \textbf{Line 26} & Divide the value obtained in line 25 by 8 to convert bits to bytes and find its ceiling since you cannot have a fraction of a bit. \\ \\
-    \textbf{Line 34} & This method will be used to encode both lists and strings with a payload greater than 55 bytes. They were grouped together due to their similarities, the only difference being their offset. \\ \\
+    \explainline{11}{Measure the number of bytes a number takes.}
+    \explainline{25}{Pass the number into a log2 function (binary is base 2, this will help us find the number of bits), floor it to round down and add 1 to make up for any truncated bits.}
+    \explainline{26}{Divide the value obtained in line 25 by 8 to convert bits to bytes and find its ceiling since you cannot have a fraction of a bit.}
+    \explainline{34}{This method will be used to encode both lists and strings with a payload greater than 55 bytes. They were grouped together due to their similarities, the only difference being their offset.}
 
-    \textbf{Line 36} & Find the number of bytes the length occupies. \\ \\
-    \textbf{Line 37-38} & Allocate enough memory to represent the encoding (number of bytes taken by length, a byte taken by the offset and another byte taken by the null byte). \\ \\
-    \textbf{Line 40-41} & Assign the first byte as the sum of the offset and the number of bytes the length consumes. Assign the last byte as a null byte. \\ \\
-    \textbf{Line 43} & The only remaining elements in the buffer array are the ones in the middle. Since integers are read using big endian, the MSB (most significant bit) will be on the left most side. buffer\_size - 1 represents the null byte, therefore, the next empty bit will be found in buffer\_size - 2 since all the bytes in the middle are empty. The for loop is also conditioned to stop when the number is smaller than or equal to 0, meaning that only the numbers between 0 and buffer\_size - 1 will be created.\\ \\
-    \textbf{Line 44} & I took a bit fiddling approach in order to break down an int into its respective bytes. Since i is starting from the last empty slot in the buffer, it will contain the last 8 bits (the LSBs), this will be done by truncating the int and taking the last 8 bits. With every iteration, i moves to the next empty slot and j increases by 1, meaning the int will by shifted by 8*j (to fit in the next 8 bits). A char will always take the last 8 bits of an integer, so to create multiple chars out of an integer, we need to shift by 8 to deconstruct the int. Kindly look at figure \ref{fig: 2bytearray} for a visual representation.\\ \\
-    \textbf{Line 51-56} & If the string is less than 56 characters long, return a 2 byte char array with the first byte as the offset 0x80 + string length and the second byte as a null byte. \\ \\
-    \textbf{Line 57-59} & Otherwise use long object encoding. \\ \\
-    \textbf{Line 80-82} & char array of size 1 is self encoding. \\ \\
-    \textbf{Line 83-85} & char array of size greater than 1 and less than 56 has an encoding of 0x80 plus its size. \\ \\
-    \textbf{Line 87} & char array of size greater than 55 will just call encode_long_object with an offset of 0xb7. \\ \\
-    \textbf{Line 89} & Concatenate the message with the encoding. \\ \\
-    \textbf{Line 92-103} & Identical to lines 73-90 but with different offsets. \\ \\
+    \explainline{36}{Find the number of bytes the length occupies.}
+    \explainline{37-38}{Allocate enough memory to represent the encoding (number of bytes taken by length, a byte taken by the offset and another byte taken by the null byte).}
+    \explainline{40-41}{Assign the first byte as the sum of the offset and the number of bytes the length consumes. Assign the last byte as a null byte.}
+    \explainline{43}{The only remaining elements in the buffer array are the ones in the middle. Since integers are read using big endian, the MSB (most significant bit) will be on the left most side. buffer\_size - 1 represents the null byte, therefore, the next empty bit will be found in buffer\_size - 2 since all the bytes in the middle are empty. The for loop is also conditioned to stop when the number is smaller than or equal to 0, meaning that only the numbers between 0 and buffer\_size - 1 will be created.\\}
+    \explainline{44}{I took a bit fiddling approach in order to break down an int into its respective bytes. Since i is starting from the last empty slot in the buffer, it will contain the last 8 bits (the LSBs), this will be done by truncating the int and taking the last 8 bits. With every iteration, i moves to the next empty slot and j increases by 1, meaning the int will by shifted by 8*j (to fit in the next 8 bits). A char will always take the last 8 bits of an integer, so to create multiple chars out of an integer, we need to shift by 8 to deconstruct the int. Kindly look at figure \ref{fig: 2bytearray} for a visual representation.\\}
+    \explainline{51-56}{If the string is less than 56 characters long, return a 2 byte char array with the first byte as the offset 0x80 + string length and the second byte as a null byte.}
+    \explainline{57-59}{Otherwise use long object encoding.}
+    \explainline{80-82}{char array of size 1 is self encoding.}
+    \explainline{83-85}{char array of size greater than 1 and less than 56 has an encoding of 0x80 plus its size.}
+    \explainline{87}{char array of size greater than 55 will just call encode_long_object with an offset of 0xb7.}
+    \explainline{89}{Concatenate the message with the encoding.}
+    \explainline{92-103}{Identical to lines 73-90 but with different offsets.}
 
    \end{longtable}
 
@@ -432,11 +493,11 @@ A helper function was also created to help with the creation of \emph{myint\_t} 
    \sourcecode{snippets/task2b/sendMessage.c}{sendMessage method implementation}{task2b_sendMessage}
 
    \begin{longtable}{l p{10cm}}
-     \textbf{Line 1} & sendMessage requires a message queue, ID to send message to (which can be null to signify that sendMessageBatch will be used instead), sender, subject and content  \\
+     \explainline{1}{sendMessage requires a message queue, ID to send message to (which can be null to signify that sendMessageBatch will be used instead), sender, subject and content }
 
-     \textbf{Line 5-7} & If the ID provided is NULL, pass the arguments into the sendMessageBatch method. This will return a success status.\\
+     \explainline{5-7}{If the ID provided is NULL, pass the arguments into the sendMessageBatch method. This will return a success status.}
 
-     \textbf{Line 9} & Call the recursive method populate\_individual\_node.  \\
+     \explainline{9}{Call the recursive method populate\_individual\_node. }
 
 
   \end{longtable}
@@ -446,15 +507,15 @@ A helper function was also created to help with the creation of \emph{myint\_t} 
    \sourcecode{snippets/task2b/populateIndividualNode.c}{populate\_individual\_node helper function}{popindnode}
 
    \begin{longtable}{l p{10cm}}
-     \textbf{Line 4-5} & Check if the provided node is NULL (meaning that the createQ method hasn't been called yet), if it is NULL, return a failure status. \\
+     \explainline{4-5}{Check if the provided node is NULL (meaning that the createQ method hasn't been called yet), if it is NULL, return a failure status.}
 
-     \textbf{Line 8} & Check if the node's ID matches the specified identifier.\\
+     \explainline{8}{Check if the node's ID matches the specified identifier.}
 
-     \textbf{Line 9} & Enqueue the node by calling enqueue\_nodeMsg\_t.  \\
+     \explainline{9}{Enqueue the node by calling enqueue\_nodeMsg\_t. }
 
-     \textbf{Line 18} & Check if the next node isn't NULL (check if there is another node in the linked list).  \\
+     \explainline{18}{Check if the next node isn't NULL (check if there is another node in the linked list). }
 
-     \textbf{Line 19} & Recursively call populate\_individual\_node again providing the next node in the linked list (and bubble the result up the recursion stack).  \\
+     \explainline{19}{Recursively call populate\_individual\_node again providing the next node in the linked list (and bubble the result up the recursion stack). }
 
   \end{longtable}
 
@@ -463,15 +524,15 @@ A helper function was also created to help with the creation of \emph{myint\_t} 
    \sourcecode{snippets/task2b/enqueue_nodeMsg_t.c}{enqueue\_nodeMsg\_t helper function}{enqueue_nodeMsg_t}
 
    \begin{longtable}{l p{10cm}}
-     \textbf{Line 3-4} & Create an Item (content of nodeMsg\_t). \\
+     \explainline{3-4}{Create an Item (content of nodeMsg\_t).}
 
-     \textbf{Line 6} & Is the queue not empty?\\
+     \explainline{6}{Is the queue not empty?}
 
-     \textbf{Line 7} & Set the current rear's next value as the newly created Item.  \\
+     \explainline{7}{Set the current rear's next value as the newly created Item. }
 
-     \textbf{Line 8} & Set the rear as the newly created Item.\\
+     \explainline{8}{Set the rear as the newly created Item.}
 
-     \textbf{Line 10} & If the queue is empty, set the front and the rear as the newly created Item.\\
+     \explainline{10}{If the queue is empty, set the front and the rear as the newly created Item.}
 
    \end{longtable}
 
@@ -480,24 +541,24 @@ A helper function was also created to help with the creation of \emph{myint\_t} 
    \sourcecode{snippets/task2b/create_item.c}{create\_item helper function}{create_item}
 
    \begin{longtable}{l p{10cm}}
-     \textbf{Line 2} & Allocate enough memory to hold the members of the Item struct. \\ \\
+     \explainline{2}{Allocate enough memory to hold the members of the Item struct.}
 
-     \textbf{Line 3} & Allocate enough memory to hold the message and it's RLP encoding.\\ \\
+     \explainline{3}{Allocate enough memory to hold the message and it's RLP encoding.}
 
-     \textbf{Line 4} & Allocate enough memory to hold the members of the Message struct.  \\ \\
+     \explainline{4}{Allocate enough memory to hold the members of the Message struct. }
 
-     \textbf{Line 5-6} & Allocate enough memory to contain the rlp encoded subject and content.\\ \\
+     \explainline{5-6}{Allocate enough memory to contain the rlp encoded subject and content.}
 
-     \textbf{Line 8-9} & Since we are placing rlp encoded strings into the item from the get go, we need to find the number of bytes which the variable holds without the rlp encoding. By adding the number of characters written and assigning them to a variable, we can keep track of this. This will also help with encoding down the line \\ \\
+     \explainline{8-9}{Since we are placing rlp encoded strings into the item from the get go, we need to find the number of bytes which the variable holds without the rlp encoding. By adding the number of characters written and assigning them to a variable, we can keep track of this. This will also help with encoding down the line}
 
-     \textbf{Line 11} & Place the current time in the Item.\\ \\
+     \explainline{11}{Place the current time in the Item.}
 
-     \textbf{Line 12-14} & Encode the sender, message and content in RLP by calling the rlp\_encode\_str method which creates the RLP encoding and concatenates it with the actual char* provided. \\ \\
+     \explainline{12-14}{Encode the sender, message and content in RLP by calling the rlp\_encode\_str method which creates the RLP encoding and concatenates it with the actual char* provided.}
 
-     \textbf{Line 15} & Set the next Item in the linked list as null, this will be necessary for the recursive methods.  \\ \\
+     \explainline{15}{Set the next Item in the linked list as null, this will be necessary for the recursive methods. }
 
 
-     \textbf{Line 17} & Return a pointer to the created item.  \\
+     \explainline{17}{Return a pointer to the created item. }
 
    \end{longtable}
 
@@ -511,10 +572,10 @@ A helper function was also created to help with the creation of \emph{myint\_t} 
     \sourcecode{snippets/task2b/batchPopulateNode.c}{batchPopulateNode helper function}{batchPopulateNode}
 
     \begin{longtable}{l p{10cm}}
-      \textbf{Line 3-4} & If the node is null, bubble up the recursion stack. \\ \\
-      \textbf{Line 5} & Enqueue the node. \\ \\
-      \textbf{Line 6} & If the next node isn't null, recursively call batch\_populate\_node providing the node in the next pointer. \\ \\
-      \textbf{Line 7} & Go up the stack. \\ \\
+      \explainline{3-4}{If the node is null, bubble up the recursion stack.}
+      \explainline{5}{Enqueue the node.}
+      \explainline{6}{If the next node isn't null, recursively call batch\_populate\_node providing the node in the next pointer.}
+      \explainline{7}{Go up the stack.}
 
 
    \end{longtable}
@@ -525,44 +586,44 @@ A helper function was also created to help with the creation of \emph{myint\_t} 
    \sourcecode{snippets/task2b/receiveMessages.c}{receiveMessages method implementation}{task2b_receiveMessages}
 
    \begin{longtable}{l p{10cm}}
-      \textbf{Line 11-12} & Go through every single node in the message queue until a node with a matching ID is found. \\ \\
-      \textbf{Line 13-14} & Wrap num\_of\_messages if it exceeds the max number of messages available. \\ \\
-      \textbf{Line 16-21} & Display the message, relinquish it of its resources, change the front of the queue to the next message to keep a functional linked list and reduce the size.. \\ \\
-      \textbf{Line 25-26} & Otherwise, set the temporary variable front as the next node in the message queue. \\ \\
+      \explainline{11-12}{Go through every single node in the message queue until a node with a matching ID is found.}
+      \explainline{13-14}{Wrap num\_of\_messages if it exceeds the max number of messages available.}
+      \explainline{16-21}{Display the message, relinquish it of its resources, change the front of the queue to the next message to keep a functional linked list and reduce the size..}
+      \explainline{25-26}{Otherwise, set the temporary variable front as the next node in the message queue.}
    \end{longtable}
    \subsubsection{purgeQs}
    If the provided ID is null, purge all of the nodes, otherwise, check if the front of the message queue matches the identifier specified, if it doesn't, call empty\_q, which will find the node and relinquish it of its resources.
    \sourcecode{snippets/task2b/purgeQs.c}{purgeQs method implementation}{task2b_purgeQs}
 
    \begin{longtable}{l p{10cm}}
-     \textbf{Line 7-11} & If the node at the front of the message queue matches the specified ID, it will be freed and the front of the message queue will be replaced with the next node in the queue. \\ \\
+     \explainline{7-11}{If the node at the front of the message queue matches the specified ID, it will be freed and the front of the message queue will be replaced with the next node in the queue.}
    \end{longtable}
 
 
     \sourcecode{snippets/task2b/empty_all_qs.c}{empty\_all\_qs helper function}{empty_all_qs}
 
    \begin{longtable}{l p{10cm}}
-     \textbf{Line 4-5} & Free all of the items in the node and set its size to 0. \\ \\
-     \textbf{Line 6-7} & If the next node isn't NULL, recursively call empty\_all\_qs with the next node in the linked list. \\ \\
+     \explainline{4-5}{Free all of the items in the node and set its size to 0.}
+     \explainline{6-7}{If the next node isn't NULL, recursively call empty\_all\_qs with the next node in the linked list.}
    \end{longtable}
 
    \sourcecode{snippets/task2b/empty_q.c}{empty\_q helper function}{empty_q}
 
    \begin{longtable}{l p{10cm}}
-     \textbf{Line 4-5} & If the next node is NULL, return a failure status. \\ \\
-     \textbf{Line 7-11} & If the next node's matches, set its size to zero and relinquish its resources. \\ \\
-     \textbf{Line 20} & If the next node isn't NULL or doesn't match, recursively call empty\_q with the next node in the linked list. This will also bubble the returned status up the recursion stack. \\ \\
+     \explainline{4-5}{If the next node is NULL, return a failure status.}
+     \explainline{7-11}{If the next node's matches, set its size to zero and relinquish its resources.}
+     \explainline{20}{If the next node isn't NULL or doesn't match, recursively call empty\_q with the next node in the linked list. This will also bubble the returned status up the recursion stack.}
    \end{longtable}
 
    \subsubsection{persistQ}
    \sourcecode{snippets/task2b/persistQs.c}{persistQs method implementation}{task2b_persistQs}
       \begin{longtable}{l p{10cm}}
-     \textbf{Line 23-36} & Find the node which matches the ID. \\ \\
-     \textbf{Line 38} & Simply sum the bytes member of every Item and assign it to the node's bytes member. \\ \\
-     \textbf{Line 43-50} & Concatenate the ID and the ``.dat'' extension and check if a file with that name already exists, if so, return a failure status. \\ \\
-     \textbf{Line 51-52} & Create the list encoding for a node and write it into the file. \\ \\
-     \textbf{Line 55-69} & Encode the item struct payload and write it into the file, write the sender (recall that everything is RLP encoded on creation), time of expiry and its encoding (has to be treated as a long object since an integer is 4 bytes), write the list encoding for the message structure and write the subject and content into the file. Lastly, move onto the next Item in the linked list. \\ \\
-     \textbf{Line 70} & Close the stream. \\ \\
+     \explainline{23-36}{Find the node which matches the ID.}
+     \explainline{38}{Simply sum the bytes member of every Item and assign it to the node's bytes member.}
+     \explainline{43-50}{Concatenate the ID and the ``.dat'' extension and check if a file with that name already exists, if so, return a failure status.}
+     \explainline{51-52}{Create the list encoding for a node and write it into the file.}
+     \explainline{55-69}{Encode the item struct payload and write it into the file, write the sender (recall that everything is RLP encoded on creation), time of expiry and its encoding (has to be treated as a long object since an integer is 4 bytes), write the list encoding for the message structure and write the subject and content into the file. Lastly, move onto the next Item in the linked list.}
+     \explainline{70}{Close the stream.}
    \end{longtable}
 
    \clearpage
@@ -572,21 +633,21 @@ A helper function was also created to help with the creation of \emph{myint\_t} 
 
    \sourcecode{snippets/task2b/restoreQ.c}{restoreQ method implementation}{task2b_restoreQ}
    \begin{longtable}{l p{10cm}}
-     \textbf{Line 12} & Skip the node list encoding by moving the file pointer over it. \\ \\
-     \textbf{Line 23} & Check if a file reading error has been thrown after the previous skip\_list, if an error is thrown, this indicates that the EOF has been reached. \\ \\
+     \explainline{12}{Skip the node list encoding by moving the file pointer over it.}
+     \explainline{23}{Check if a file reading error has been thrown after the previous skip\_list, if an error is thrown, this indicates that the EOF has been reached.}
    \end{longtable}
 
    \sourcecode{snippets/task2b/file_functions.c}{Helper functions used to decode from the previously RLP encoded file.}{file_functions}
    \begin{longtable}{l p{10cm}}
-     \textbf{Line 7} & Get the list encoding. \\ \\
-     \textbf{Line 8-14} & If between 0xc0 and 0xf7, the list is self encoding. \\ \\
-     \textbf{Line 15-21} & If the payload is greater than 55, find the byte length (which will determine to the number of characters to skip), a call fgetc (which also moves the file pointer by a character) until we've reached the last byte. Don't forget that fgetc will always return the value of the next char in the pointer. \\ \\
-     \textbf{Line 25-30} & Get the first character and read the next 4 bytes as a long int. \\ \\
-     \textbf{Line 37-38} & Get the offset. \\ \\
-     \textbf{Line 40-45} & If the offset is less than 0x80, it is self encoding, return a char* containing the character and a null byte. \\ \\
-     \textbf{Line 45-52} & If the offset is between 0x80 and 0xb8 (length less than 56 bytes), then call fread on the length of the string (fread behaves like fgetc ie. the file pointer will still be moved). \\ \\
-     \textbf{Line 53-57} & If the length is greater than 55 bytes, get the byte length, shift each byte accordingly and OR it with the size, that way, the bytes which have been deconstructed are stuffed back into a 4 byte variable. \\ \\
-     \textbf{Line 59-61} & Read the remaining text and return it. \\ \\
+     \explainline{7}{Get the list encoding.}
+     \explainline{8-14}{If between 0xc0 and 0xf7, the list is self encoding.}
+     \explainline{15-21}{If the payload is greater than 55, find the byte length (which will determine to the number of characters to skip), a call fgetc (which also moves the file pointer by a character) until we've reached the last byte. Don't forget that fgetc will always return the value of the next char in the pointer.}
+     \explainline{25-30}{Get the first character and read the next 4 bytes as a long int.}
+     \explainline{37-38}{Get the offset.}
+     \explainline{40-45}{If the offset is less than 0x80, it is self encoding, return a char* containing the character and a null byte.}
+     \explainline{45-52}{If the offset is between 0x80 and 0xb8 (length less than 56 bytes), then call fread on the length of the string (fread behaves like fgetc ie. the file pointer will still be moved).}
+     \explainline{53-57}{If the length is greater than 55 bytes, get the byte length, shift each byte accordingly and OR it with the size, that way, the bytes which have been deconstructed are stuffed back into a 4 byte variable.}
+     \explainline{59-61}{Read the remaining text and return it.}
    \end{longtable}
 
    \subsection{Limitations and known bugs}
