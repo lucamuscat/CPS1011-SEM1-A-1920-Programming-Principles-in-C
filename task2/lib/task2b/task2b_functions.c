@@ -27,6 +27,7 @@ int createQ(MsgQs_t *q, int identifier) {
   // Setting the next pointer to null is important for the recursive
   // methods
   tmp->next = NULL;
+  tmp->front = NULL;
   tmp->ID = identifier;
   tmp->size = 0;
   // A basic enqueue procedure.
@@ -123,8 +124,8 @@ int receiveMessages(MsgQs_t *q, int identifier, size_t num_of_messages) {
         // Link the front to the next item.
         front_item = front->front;
         printItem(front_item);
+		front->front = front_item->next;
         free_individual_item(front_item);
-        front->front = front_item->next;
         front->size--;
       }
       return 1;

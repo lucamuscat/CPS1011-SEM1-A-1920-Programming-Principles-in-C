@@ -34,6 +34,9 @@ void free_individual_item(Item *Item) {
 }
 
 void free_item(Item *Item) {
+  if(Item == NULL)
+	return;
+
   if (Item->next != NULL)
     free_item(Item->next);
   free_individual_item(Item);
